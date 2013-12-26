@@ -16,7 +16,7 @@ import com.mongodb.MongoClientURI;
 public class UserService {
 
 	public static MongoCollection getConnection(String dbName, String collectionName) throws UnknownHostException {
-		MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://tkmcnally:t5725555@paulo.mongohq.com:10055/app20608490"));
+		MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://tkmcnally:t5725555@paulo.mongohq.com:10055/" + Constants.DB_NAME));
 		DB db = mongoClient.getDB(dbName);
 		Jongo jongo = new Jongo(db);
 		MongoCollection mongoCollection = jongo.getCollection(collectionName);
