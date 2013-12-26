@@ -32,7 +32,7 @@ public class Application extends Controller {
     	
     	//JSON object from request.
     	JsonNode requestJson = request().body().asJson();
-    	
+    	 
     	//Check for required fields
     	String email = requestJson.findPath("email").textValue();
     	String firstName = requestJson.findPath("firstName").textValue();

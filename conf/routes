@@ -6,10 +6,10 @@
 GET     /                           controllers.Application.index()
 
 #Register page
-POST	/api/register					controllers.Application.register()
+POST	/api/register				controllers.Application.register()
 
 #Login page
-POST	/api/login						controllers.Application.authenticate()
+POST	/api/login					controllers.Application.authenticate()
 
 
 
