@@ -46,16 +46,16 @@ public class Application extends Controller {
     	newUser.setPassword(password);
     	
     	//Check if user can register
-    	String returnMessage;
     	Status status = null;
+    	ObjectNode result = Json.newObject();
     	try {
 			if(UserService.userAlreadyExists(email)) {
-				returnMessage = "That username is already registered!";
-				status = badRequest(returnMessage);
+				result.put("message", email + " is already registered!");
+				status = badRequest(result);
 				
 			} else {
-				returnMessage = email + " has been registered!";
-				status = ok(returnMessage);
+				result.put("message", email + " has been registered!");
+				status = ok(result);
 				UserService.registerUser(newUser);
 				
 			}
