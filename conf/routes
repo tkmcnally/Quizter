@@ -11,7 +11,11 @@ POST	/api/register				controllers.Application.register()
 #Login page
 POST	/api/login					controllers.Application.authenticate()
 
+#Testing restFB
+GET		/api/facebook/:ACCESS_TOKEN	controllers.Application.htmlFacebookTest(ACCESS_TOKEN: String)
 
+#Testing restFB android
+POST	/api/android/facebook/	    controllers.Application.androidFacebookTest()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
