@@ -8,8 +8,7 @@ public class User {
 		
 		private String name;
 
-		
-		public User(FacebookUser facebookUser) {
+		public void mapFacebookUser(FacebookUser facebookUser) {
 			this._id = facebookUser.id;
 			this.name = facebookUser.name;
 		}

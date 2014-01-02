@@ -69,7 +69,8 @@ public class Application extends Controller {
     			Parameter.with("width", 200), Parameter.with("redirect", false), 
     			Parameter.with("height", 200), Parameter.with("type", "normal")));
     	
-    	User user = new User(facebookUser);
+    	User user = new User();
+    	user.mapFacebookUser(facebookUser);
     	boolean verified = authentication(user);
 
     	if(verified) {
