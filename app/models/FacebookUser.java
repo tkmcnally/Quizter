@@ -12,6 +12,17 @@ public class FacebookUser {
   
   @Facebook
   String id;
+  
+  @Facebook 
+  String name;
+
+public String getName() {
+	return name;
+}
+
+public void setName(String name) {
+	this.name = name;
+}
 
 public String getId() {
 	return id;
@@ -27,6 +38,20 @@ public Data getData() {
 
 public void setData(Data data) {
 	this.data = data;
+}
+
+public void combine(FacebookUser user) {
+	if(user.data != null) {
+		this.data = user.data;
+	}
+	
+	if(user.id != null) {
+		this.id = user.id;
+	}
+	
+	if(user.name != null) {
+		this.name = user.name;
+	}
 }
 
 }

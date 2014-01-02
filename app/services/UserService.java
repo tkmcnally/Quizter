@@ -2,6 +2,7 @@ package services;
 
 import java.net.UnknownHostException;
 
+import models.FacebookUser;
 import models.User;
 
 import org.jongo.Jongo;
@@ -24,11 +25,10 @@ public class UserService {
 		return mongoCollection;
 	}
 	
-	public static boolean userAlreadyExists(String email) throws UnknownHostException {
+	public static boolean userAlreadyExists(User user) throws UnknownHostException {
 		boolean userExists = false;
-		
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
-		User reqUser = mongoCollection.findOne("{email: '" + email + "'}").as(User.class);
+		User reqUser = mongoCollection.findOne("{_id: '" + user.get_id() +"'}").as(User.class);
 		if(reqUser != null) {
 			userExists = true;
 		}
@@ -45,10 +45,10 @@ public class UserService {
 		boolean authenticated = false;
 		
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
-		User reqUser = mongoCollection.findOne("{email: '" + user.getEmail() + "', password: '" + user.getPassword() + "'}").as(User.class);
-		if(reqUser != null) {
-			authenticated = true;
-		}
+	//	User reqUser = mongoCollection.findOne("{email: '" + user.getEmail() + "', password: '" + user.getPassword() + "'}").as(User.class);
+		//if(reqUser != null) {
+	//		authenticated = true;
+	//	}
 		
 		return authenticated;
 	}
