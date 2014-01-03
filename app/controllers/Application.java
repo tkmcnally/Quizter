@@ -33,11 +33,12 @@ public class Application extends Controller {
         return ok(index.render(new ArrayList<String>()));
     }
     
-    public static User authentication(User user) {
+    public static User authentication(User newUser) {
+    	User user = null;
     	try {
-    		User user = UserService.userAlreadyExists(user);
+    		user = UserService.userAlreadyExists(newUser);
 			if(user == null) {
-				user = UserService.registerUser(user);
+				user = UserService.registerUser(newUser);
 			}
 
     	} catch (UnknownHostException e) {
