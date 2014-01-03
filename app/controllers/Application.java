@@ -126,8 +126,11 @@ public class Application extends Controller {
     	
     	updatedUser.setQuestions(mongoQuestions);
     	
+    	try {
     	UserService.updateQuestions(updatedUser);
-  
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
     	
     	return ok(views.html.questions.render(questions));
     }
