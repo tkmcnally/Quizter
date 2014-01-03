@@ -33,20 +33,18 @@ public class Application extends Controller {
         return ok(index.render(new ArrayList<String>()));
     }
     
-    public static boolean authentication(User user) {
-    	boolean authenticated = true;
+    public static User authentication(User user) {
     	try {
-    		
-			if(!UserService.userAlreadyExists(user)) {
-				UserService.registerUser(user);
+    		User user = UserService.userAlreadyExists(user);
+			if(user == null) {
+				user = UserService.registerUser(user);
 			}
 
     	} catch (UnknownHostException e) {
-    		authenticated = false;
 			e.printStackTrace();
 		}
     	
-    	return authenticated;
+    	return user;
     }
         
     @BodyParser.Of(BodyParser.Json.class)
@@ -69,15 +67,16 @@ public class Application extends Controller {
     			Parameter.with("width", 200), Parameter.with("redirect", false), 
     			Parameter.with("height", 200), Parameter.with("type", "normal")));
     	
-    	User user = new User();
-    	user.mapFacebookUser(facebookUser);
-    	boolean verified = authentication(user);
+    	User tempUser = new User();
+    	tempUser.mapFacebookUser(facebookUser);
+    	User user = authentication(tempUser);
 
-    	if(verified) {
+    	if(user != null) {
 	    	//Return JSON.
 	    	ObjectNode result = Json.newObject();
-	    	result.put("id", facebookUser.getId());
-	    	result.put("name", facebookUser.getName());
+	    	result.put("id", user.get_id());
+	    	result.put("name", user.getName());
+	    	result.put("date_created", user.getDateCreated());
 	    	result.put("photo_url", facebookUser.getData().getUrl());
 	    	
 	    	status = ok(result);

@@ -1,6 +1,9 @@
 package services;
 
 import java.net.UnknownHostException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import models.FacebookUser;
 import models.User;
@@ -25,32 +28,23 @@ public class UserService {
 		return mongoCollection;
 	}
 	
-	public static boolean userAlreadyExists(User user) throws UnknownHostException {
-		boolean userExists = false;
+	public static User userAlreadyExists(User user) throws UnknownHostException {
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
 		User reqUser = mongoCollection.findOne("{_id: '" + user.get_id() +"'}").as(User.class);
-		if(reqUser != null) {
-			userExists = true;
-		}
 		
-		return userExists;
+		return reqUser;
 	}
 	
-	public static void registerUser(User user) throws UnknownHostException {
-		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
-		mongoCollection.insert(user);
-	}
-	
-	public static boolean authenticateUser(User user) throws UnknownHostException {
-		boolean authenticated = false;
+	public static User registerUser(User user) throws UnknownHostException {
+		User newUser = user;
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		newUser.setDateCreated(dateFormat.format(cal.getTime()));
 		
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
-	//	User reqUser = mongoCollection.findOne("{email: '" + user.getEmail() + "', password: '" + user.getPassword() + "'}").as(User.class);
-		//if(reqUser != null) {
-	//		authenticated = true;
-	//	}
+		mongoCollection.insert(newUser);
 		
-		return authenticated;
+		return newUser;
 	}
-	
 }

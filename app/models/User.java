@@ -7,6 +7,8 @@ public class User {
 		private String email;
 		
 		private String name;
+		
+		private String dateCreated;
 
 		public void mapFacebookUser(FacebookUser facebookUser) {
 			this._id = facebookUser.id;
@@ -35,6 +37,14 @@ public class User {
 		
 		public void setName(String name) {
 			this.name = name;	
+		}
+		
+		public String getDateCreated() {
+			return dateCreated;
+		}
+
+		public void setDateCreated(String dateCreated) {
+			this.dateCreated = dateCreated;
 		}
 		
 
