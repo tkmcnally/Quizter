@@ -47,4 +47,12 @@ public class UserService {
 		
 		return newUser;
 	}
+	
+	public static User updateQuestions(User user) throws UnknownHostException {
+		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+		mongoCollection.update(user.get_id()).with(user.getQuestions());
+		
+		return user;
+		
+	}
 }

@@ -2,7 +2,9 @@ package controllers;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import models.FacebookUser;
 import models.User;
@@ -12,6 +14,7 @@ import org.jongo.MongoCollection;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
@@ -85,5 +88,47 @@ public class Application extends Controller {
     		status = unauthorized();
     	}
     	return status;
+    }
+    
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result updateQuestions() {
+    	
+    	//JSON object from request.
+    	JsonNode requestJson = request().body().asJson();
+    	
+    	//Check for un/pw
+    	String ACCESS_TOKEN = requestJson.findPath("ACCESS_TOKEN").textValue();
+    	
+    	//Public facebook client accessor
+    	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
+    	
+    	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
+    	User updatedUser = new User();
+    	updatedUser.mapFacebookUser(facebookUser);
+    
+    	JsonNode userQuestions = requestJson.findPath("updated_questions");
+    	
+    	List<String> questions = new ArrayList<String>();
+    	questions.add(userQuestions.elements() + "");
+    	
+    	ArrayList<BasicDBObject> mongoQuestions = new ArrayList<BasicDBObject>();
+    
+    	Iterator<JsonNode> iter = userQuestions.elements();
+    	while (iter.hasNext()) {
+			JsonNode node = iter.next();
+			
+			String questionKey = node.path("question").textValue();
+			String questionValue = node.path("answer").textValue();
+			
+			mongoQuestions.add(new BasicDBObject(questionKey, questionValue));
+		}
+    	
+    	
+    	updatedUser.setQuestions(mongoQuestions);
+    	
+    	UserService.updateQuestions(updatedUser);
+  
+    	
+    	return ok(views.html.questions.render(questions));
     }
 }

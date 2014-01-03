@@ -1,5 +1,7 @@
 package models;
 
+import java.util.ArrayList;
+
 public class User {
 	
 		private String _id;
@@ -9,6 +11,8 @@ public class User {
 		private String name;
 		
 		private String dateCreated;
+		
+		private ArrayList questions;
 
 		public void mapFacebookUser(FacebookUser facebookUser) {
 			this._id = facebookUser.id;
@@ -47,5 +51,12 @@ public class User {
 			this.dateCreated = dateCreated;
 		}
 		
+		public ArrayList getQuestions() {
+			return questions;
+		}
+
+		public void setQuestions(ArrayList questions) {
+			this.questions = questions;
+		}
 
 }
