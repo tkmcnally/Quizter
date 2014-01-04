@@ -52,7 +52,9 @@ public class UserService {
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
 		mongoCollection.update("{_id: '" + user.get_id() + "'}").with("{$set: {questions: " + user.getQuestions() + "}}");
 		
-		return user;
+		
+		User reqUser = mongoCollection.findOne("{_id: '" + user.get_id() +"'}").as(User.class);
+		return reqUser;
 		
 	}
 }

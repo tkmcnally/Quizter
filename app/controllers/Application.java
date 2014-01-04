@@ -82,7 +82,11 @@ public class Application extends Controller {
 	    	ObjectNode result = Json.newObject();
 	    	result.put("id", user.get_id());
 	    	result.put("name", user.getName());
-	    	result.put("questions", user.getQuestions().toString());
+	    	StringBuilder questions = new StringBuilder(user.getQuestions().toString());
+	    	questions = questions.delete(0, 1);
+	    	questions = questions.delete(questions.length() - 1, questions.length());
+	    	String questionsString = questions.toString();
+	    	result.put("questions", questionsString);
 	    	result.put("date_created", user.getDateCreated());
 	    	result.put("photo_url", facebookUser.getData().getUrl());
 	    	
