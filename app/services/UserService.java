@@ -50,7 +50,7 @@ public class UserService {
 	
 	public static User updateQuestions(User user) throws UnknownHostException {
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
-		mongoCollection.update("{_id: '" + user.get_id() + "'}").with(user.getQuestions());
+		mongoCollection.update("{_id: '" + user.get_id() + "'}").with("{$set: {questions: " + user.getQuestions() + "}}");
 		
 		return user;
 		

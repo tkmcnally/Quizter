@@ -1,5 +1,6 @@
 package controllers;
 
+import java.io.PrintStream;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -80,6 +81,7 @@ public class Application extends Controller {
 	    	ObjectNode result = Json.newObject();
 	    	result.put("id", user.get_id());
 	    	result.put("name", user.getName());
+	    	result.put("questions", user.getQuestions().toString());
 	    	result.put("date_created", user.getDateCreated());
 	    	result.put("photo_url", facebookUser.getData().getUrl());
 	    	
@@ -120,6 +122,8 @@ public class Application extends Controller {
 			String questionKey = node.path("question").textValue();
 			String questionValue = node.path("answer").textValue();
 			
+			questionKey.replace("\"", "");
+			questionValue.replace("\"", "'");
 			mongoQuestions.add(new BasicDBObject(questionKey, questionValue));
 		}
     	
@@ -132,9 +136,12 @@ public class Application extends Controller {
     	} catch (Exception e) {
     	
     		questions.add("error");
-    		questions.add(e.getStackTrace().toString());
+    		PrintStream s = null;
+    		e.printStackTrace();
+    		//questions.add(s);
     		return ok(views.html.questions.render(questions));
     	}
+    	questions.add(updatedUser.getQuestions() + "");
     	
     	return ok(views.html.questions.render(questions));
     }
