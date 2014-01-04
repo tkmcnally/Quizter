@@ -83,7 +83,9 @@ public class Application extends Controller {
 	    	result.put("id", user.get_id());
 	    	result.put("name", user.getName());
 	    	String questions = user.getQuestions().toString();
-
+	    	questions = questions.replace(":\"[", ": [");
+	    	questions = questions.replace("]\"", "]");
+	    	questions =  questions.replace("\\\"", "\"");
 	    	result.put("questions", questions);
 	    	result.put("date_created", user.getDateCreated());
 	    	result.put("photo_url", facebookUser.getData().getUrl());
