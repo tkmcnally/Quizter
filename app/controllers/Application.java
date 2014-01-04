@@ -15,6 +15,7 @@ import org.jongo.MongoCollection;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.Mongo;
@@ -113,10 +114,12 @@ public class Application extends Controller {
     	List<String> questions = new ArrayList<String>();
     	questions.add(userQuestions.elements() + "");
     	
-    	ArrayList<BasicDBObject> mongoQuestions = new ArrayList<BasicDBObject>();
-    
+    	BasicDBList mongoQuestions = new BasicDBList();
+  
     	Iterator<JsonNode> iter = userQuestions.elements();
     	while (iter.hasNext()) {
+    		ArrayList<BasicDBObject> objects = new ArrayList<BasicDBObject>();
+    		
 			JsonNode node = iter.next();
 			
 			String questionKey = node.path("question").textValue();
@@ -124,10 +127,16 @@ public class Application extends Controller {
 			
 			questionKey.replace("\"", "");
 			questionValue.replace("\"", "'");
-			mongoQuestions.add(new BasicDBObject(questionKey, questionValue));
+
+			BasicDBObject newObj = new BasicDBObject(2);
+			newObj.put("question", questionKey);
+			newObj.put("answer", questionValue);
+
+			mongoQuestions.add(newObj);
+			
 		}
     	
-    	
+    	//BasicDBObject obj = new BasicDBObject("questions", mongoQuestions);
     	updatedUser.setQuestions(mongoQuestions);
     	
     	try {

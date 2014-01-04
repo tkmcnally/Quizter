@@ -2,6 +2,9 @@ package models;
 
 import java.util.ArrayList;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+
 public class User {
 	
 		private String _id;
@@ -12,7 +15,7 @@ public class User {
 		
 		private String dateCreated;
 		
-		private ArrayList questions;
+		private BasicDBList questions;
 
 		public void mapFacebookUser(FacebookUser facebookUser) {
 			this._id = facebookUser.id;
@@ -51,11 +54,11 @@ public class User {
 			this.dateCreated = dateCreated;
 		}
 		
-		public ArrayList getQuestions() {
+		public 	BasicDBList getQuestions() {
 			return questions;
 		}
 
-		public void setQuestions(ArrayList questions) {
+		public void setQuestions(	BasicDBList questions) {
 			this.questions = questions;
 		}
 
