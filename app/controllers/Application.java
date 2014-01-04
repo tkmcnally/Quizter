@@ -149,11 +149,34 @@ public class Application extends Controller {
     		PrintStream s = null;
     		e.printStackTrace();
     		//questions.add(s);
-    		return ok(views.html.questions.render(questions));
     	}
     	questions.add(updatedUser.getQuestions() + "");
     	
-    	return ok(views.html.questions.render(questions));
+Status status = null;
+    	
+    	
+    	facebookUser.combine(facebookClient.fetchObject(facebookUser.getId() + "/picture", FacebookUser.class, 
+    			Parameter.with("width", 200), Parameter.with("redirect", false), 
+    			Parameter.with("height", 200), Parameter.with("type", "normal")));
+    	
+    	User tempUser = new User();
+    	tempUser.mapFacebookUser(facebookUser);
+    	User user = authentication(tempUser);
+
+    	if(user != null) {
+	    	//Return JSON.
+	    	ObjectNode result = Json.newObject();
+	    	result.put("id", user.get_id());
+	    	result.put("name", user.getName());
+	    	result.put("questions", user.getQuestions().toString());
+	    	result.put("date_created", user.getDateCreated());
+	    	result.put("photo_url", facebookUser.getData().getUrl());
+	    	
+	    	status = ok(result);
+    	} else {
+    		status = unauthorized();
+    	}
+    	return status;
     }
     
     @BodyParser.Of(BodyParser.Json.class)
