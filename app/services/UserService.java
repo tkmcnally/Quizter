@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import models.FacebookUser;
+import models.Question;
 import models.User;
 
 import org.jongo.Jongo;
@@ -56,5 +57,12 @@ public class UserService {
 		User reqUser = mongoCollection.findOne("{_id: '" + user.get_id() +"'}").as(User.class);
 		return reqUser;
 		
+	}
+	
+	public static Iterable<Question> loadQuestionsFromIndex(int index) throws UnknownHostException {
+		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "questions");
+		
+		Iterable<Question> questionList = mongoCollection.find("{_id: {$gte: " + index + ", $lt: " + (index + 10) + "}}").as(Question.class);
+		return questionList;
 	}
 }

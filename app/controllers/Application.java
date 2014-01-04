@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import models.FacebookUser;
+import models.Question;
 import models.User;
 
 import org.jongo.Jongo;
@@ -82,11 +83,7 @@ public class Application extends Controller {
 	    	ObjectNode result = Json.newObject();
 	    	result.put("id", user.get_id());
 	    	result.put("name", user.getName());
-	    	String questions = user.getQuestions().toString();
-	    	questions = questions.replace(":\"[", ": [");
-	    	questions = questions.replace("]\"", "]");
-	    	questions =  questions.replace("\\\"", "\"");
-	    	result.put("questions", questions);
+	    	result.put("questions", user.getQuestions().toString());
 	    	result.put("date_created", user.getDateCreated());
 	    	result.put("photo_url", facebookUser.getData().getUrl());
 	    	
@@ -158,4 +155,57 @@ public class Application extends Controller {
     	
     	return ok(views.html.questions.render(questions));
     }
+    
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result loadQuestions() {
+    	
+       	//JSON object from request.
+    	JsonNode requestJson = request().body().asJson();
+    	
+    	//Check for un/pw
+    	String ACCESS_TOKEN = requestJson.findPath("ACCESS_TOKEN").textValue();
+    	
+    	//Public facebook client accessor
+    	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
+    	
+    	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
+    	User updatedUser = new User();
+    	updatedUser.mapFacebookUser(facebookUser);
+    
+    	JsonNode userQuestions = requestJson.findPath("current_end_index");
+    	int index = userQuestions.intValue();
+    	Status status = null;
+    	
+    	try {
+    		Iterable<Question> questions = UserService.loadQuestionsFromIndex(index);
+    		ArrayList<String> questionList = new ArrayList<String>();
+    		Iterator<Question> iter = questions.iterator();
+    		while(iter.hasNext()) {
+    			Question next = iter.next();
+    			questionList.add(next.getQuestion());
+    		}
+    		BasicDBList newList = new BasicDBList();
+    		for(String q: questionList) {
+    			BasicDBObject obj = new BasicDBObject(1);
+    			obj.put("question", q);
+    			newList.add(obj);
+    		}
+
+    		ObjectNode result = Json.newObject();
+	    	result.put("questions", newList.toString());
+
+	    	status = ok(result);
+    		
+    	} catch (Exception e) {
+    		status = unauthorized();
+    		e.printStackTrace();
+    	}
+    	
+    	
+    	return status;
+    	
+    	
+    }
+    
+    
 }
