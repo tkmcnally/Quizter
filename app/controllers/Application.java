@@ -96,7 +96,10 @@ public class Application extends Controller {
     
     @BodyParser.Of(BodyParser.Json.class)
     public static Result updateQuestions() {
-    	
+
+		String questionKey = null;
+		String questionsString = null;
+		
     	//JSON object from request.
     	JsonNode requestJson = request().body().asJson();
     	
@@ -116,28 +119,20 @@ public class Application extends Controller {
     	questions.add(userQuestions.elements() + "");
     	
     	BasicDBList mongoQuestions = new BasicDBList();
-  
-    	Iterator<JsonNode> iter = userQuestions.elements();
-    	while (iter.hasNext()) {
-    		ArrayList<BasicDBObject> objects = new ArrayList<BasicDBObject>();
-    		
-			JsonNode node = iter.next();
-			
-			String questionKey = node.path("question").textValue();
-			String questionValue = node.path("answer").textValue();
-			
-			questionKey.replace("\"", "");
-			questionValue.replace("\"", "'");
 
-			BasicDBObject newObj = new BasicDBObject(2);
-			newObj.put("question", questionKey);
-			newObj.put("answer", questionValue);
+    	String resultString = userQuestions.toString();
+    	resultString = resultString.replace(":\"[", ": [");
+    	resultString = resultString.replace("]\"", "]");
+    	resultString =  resultString.replace("\\\"", "\"");
+    	StringBuilder rS = new StringBuilder(resultString);
+    	rS.delete(0, 1);	
+        
+        questionsString = rS.toString();
+		Object o = com.mongodb.util.JSON.parse(questionsString);
+		BasicDBList dbObj = (BasicDBList) o;
 
-			mongoQuestions.add(newObj);
-			
-		}
-    	
-    	//BasicDBObject obj = new BasicDBObject("questions", mongoQuestions);
+		mongoQuestions.add(dbObj);
+
     	updatedUser.setQuestions(mongoQuestions);
     	
     	try {
@@ -168,7 +163,7 @@ Status status = null;
 	    	ObjectNode result = Json.newObject();
 	    	result.put("id", user.get_id());
 	    	result.put("name", user.getName());
-	    	result.put("questions", user.getQuestions().toString());
+	    	result.put("questions", questionsString);
 	    	result.put("date_created", user.getDateCreated());
 	    	result.put("photo_url", facebookUser.getData().getUrl());
 	    	
