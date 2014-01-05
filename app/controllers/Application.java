@@ -118,7 +118,7 @@ public class Application extends Controller {
     	List<String> questions = new ArrayList<String>();
     	questions.add(userQuestions.elements() + "");
     	
-    	BasicDBList mongoQuestions = new BasicDBList();
+    	//BasicDBList mongoQuestions = new BasicDBList();
 
     	String resultString = userQuestions.toString();
     	resultString = resultString.replace(":\"[", ": [");
@@ -131,9 +131,9 @@ public class Application extends Controller {
 		Object o = com.mongodb.util.JSON.parse(questionsString);
 		BasicDBList dbObj = (BasicDBList) o;
 
-		mongoQuestions.add(dbObj);
+		//mongoQuestions.add(dbObj);
 
-    	updatedUser.setQuestions(mongoQuestions);
+    	updatedUser.setQuestions(dbObj);
     	
     	try {
     		UserService.updateQuestions(updatedUser);
