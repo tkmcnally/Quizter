@@ -14,6 +14,8 @@ import org.jongo.MongoCollection;
 
 import utils.Constants;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -42,6 +44,16 @@ public class UserService {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		newUser.setDateCreated(dateFormat.format(cal.getTime()));
+		
+		BasicDBList newList = new BasicDBList();
+		for(int i = 0; i < 5; i++) {
+			BasicDBObject obj = new BasicDBObject(2);
+			obj.put("question", "Select a question!");
+			obj.put("answer", "");
+			newList.add(obj);
+		}
+		
+		user.setQuestions(newList);
 		
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
 		mongoCollection.insert(newUser);
