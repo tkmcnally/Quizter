@@ -191,7 +191,7 @@ Status status = null;
     	updatedUser.mapFacebookUser(facebookUser);
     
     	JsonNode userQuestions = requestJson.findPath("current_end_index");
-    	int index = userQuestions.intValue();
+    	int index = Integer.parseInt(userQuestions.textValue());
     	Status status = null;
     	
     	try {
