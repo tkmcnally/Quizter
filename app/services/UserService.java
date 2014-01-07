@@ -62,7 +62,7 @@ public class UserService {
 	public static Iterable<Question> loadQuestionsFromIndex(int index) throws UnknownHostException {
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "questions");
 		
-		Iterable<Question> questionList = mongoCollection.find("{_id: {$gte: " + index + ", $lt: " + (index + 10) + "}}").as(Question.class);
+		Iterable<Question> questionList = mongoCollection.find("{_id: {$gt: " + (index - 10) + ", $lte: " + index + "}}").as(Question.class);
 		return questionList;
 	}
 }
