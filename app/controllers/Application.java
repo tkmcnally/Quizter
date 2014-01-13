@@ -259,7 +259,7 @@ Status status = null;
     	
     	Score score = new Score();
     	score.set_id(user.get_id());
-    	score.setScore(score_value);
+    	score.setScore(score_value + "");
     	
     	try {
 			UserService.updateScore(score);

@@ -62,7 +62,7 @@ public class UserService {
 		
 		Score score = new Score();
 		score.set_id(user.get_id());
-		score.setScore(10);
+		score.setScore(10 + "");
 		
 		mongoCollection = getConnection(Constants.DB_NAME, "scores");
 		mongoCollection.insert(score);

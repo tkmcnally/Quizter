@@ -4,7 +4,7 @@ public class Score {
 
 	private String _id;
 
-	private int score;
+	private String score;
 
 	public String get_id() {
 		return _id;
@@ -14,11 +14,11 @@ public class Score {
 		this._id = _id;
 	}
 	
-	public int getScore() {
+	public String getScore() {
 		return score;
 	}
 
-	public void setScore(int score) {
+	public void setScore(String score) {
 		this.score = score;
 	}
 }
