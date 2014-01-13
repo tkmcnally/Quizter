@@ -16,6 +16,8 @@ import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -26,6 +28,8 @@ import com.mongodb.MongoClientURI;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
+import com.restfb.json.JsonObject;
+import com.restfb.types.FriendList;
 
 import play.*;
 import play.libs.Json;
@@ -282,5 +286,57 @@ Status status = null;
     	return status;
     	
     }
+    
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result loadLeaderboard() {
+    	//JSON object from request.
+    	JsonNode requestJson = request().body().asJson();
+    	
+    	//Check for un/pw
+    	String ACCESS_TOKEN = requestJson.findPath("ACCESS_TOKEN").textValue();
+    	
+    	//Public facebook client accessor
+    	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
+    	
+    	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
+    	User user = new User();
+    	user.mapFacebookUser(facebookUser);
+    	
+    	
+    	com.restfb.Connection<JsonObject> myFriends = facebookClient.fetchConnection("me/friends", JsonObject.class, Parameter.with("fields", "picture,name"));
+    	
+    	Status status = null;
+    
+    	ObjectNode parent = Json.newObject();
+    	
+    	ObjectNode child = Json.newObject();
+
+    	
+    	ArrayNode apps = child.putArray("leaderboard");
+    	
+    	for(JsonObject u: myFriends.getData()) {
+    		ObjectNode uNode = Json.newObject();
+    		uNode.put("id", u.getString("id"));
+    		uNode.put("rank", "1");
+    		uNode.put("name", u.getString("name"));
+    	
+    		uNode.put("picture_url", u.getJsonObject("picture").getJsonObject("data").getString("url"));
+    		uNode.put("score", "999");
+    		
+    		apps.add(uNode);
+    	}
+    	
+    	try {
+    		
+
+	    	
+    		status = ok(child);
+    	} catch (Exception e) {
+    		status = unauthorized();
+    		e.printStackTrace();
+    	}
+    	return status;
+    }
+    
     
 }

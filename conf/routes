@@ -16,5 +16,7 @@ POST	/api/android/facebook/loadquestions	    controllers.Application.loadQuestio
 
 POST 	/api/android/facebook/updatescore	controllers.Application.updateScore()
 
+POST	/api/android/facebook/leaderboard	controllers.Application.loadLeaderboard()
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
