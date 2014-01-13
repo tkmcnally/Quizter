@@ -7,6 +7,7 @@ import java.util.Calendar;
 
 import models.FacebookUser;
 import models.Question;
+import models.Score;
 import models.User;
 
 import org.jongo.Jongo;
@@ -58,6 +59,14 @@ public class UserService {
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
 		mongoCollection.insert(newUser);
 		
+		
+		Score score = new Score();
+		score.set_id(user.get_id());
+		score.setScore(10);
+		
+		mongoCollection = getConnection(Constants.DB_NAME, "scores");
+		mongoCollection.insert(score);
+		
 		return newUser;
 	}
 	
@@ -76,5 +85,19 @@ public class UserService {
 		
 		Iterable<Question> questionList = mongoCollection.find("{_id: {$gt: " + (index - 10) + ", $lte: " + index + "}}").as(Question.class);
 		return questionList;
+	}
+	
+	public static void updateScore(Score score) throws UnknownHostException {
+		
+		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "scores");
+		mongoCollection.save(score);
+		
+	}
+	
+	public static Score retrieveScore(User user) throws UnknownHostException {
+		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "scores");
+		
+		Score score = mongoCollection.findOne("{_id: '" + user.get_id() +"'}").as(Score.class);
+		return score;
 	}
 }

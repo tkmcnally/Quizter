@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import models.FacebookUser;
 import models.Question;
+import models.Score;
 import models.User;
 
 import org.jongo.Jongo;
@@ -77,7 +78,15 @@ public class Application extends Controller {
     	User tempUser = new User();
     	tempUser.mapFacebookUser(facebookUser);
     	User user = authentication(tempUser);
-
+    	
+    	Score score = new Score();
+		try {
+			score = UserService.retrieveScore(user);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     	if(user != null) {
 	    	//Return JSON.
 	    	ObjectNode result = Json.newObject();
@@ -86,6 +95,7 @@ public class Application extends Controller {
 	    	result.put("questions", user.getQuestions().toString());
 	    	result.put("date_created", user.getDateCreated());
 	    	result.put("photo_url", facebookUser.getData().getUrl());
+	    	result.put("score", score.getScore());
 	    	
 	    	status = ok(result);
     	} else {
@@ -118,8 +128,6 @@ public class Application extends Controller {
     	List<String> questions = new ArrayList<String>();
     	questions.add(userQuestions.elements() + "");
     	
-    	//BasicDBList mongoQuestions = new BasicDBList();
-
     	String resultString = userQuestions.toString();
     	resultString = resultString.replace(":\"[", ": [");
     	resultString = resultString.replace("]\"", "]");
@@ -131,10 +139,8 @@ public class Application extends Controller {
 		Object o = com.mongodb.util.JSON.parse(questionsString);
 		BasicDBList dbObj = (BasicDBList) o;
 
-		//mongoQuestions.add(dbObj);
-
     	updatedUser.setQuestions(dbObj);
-    	
+    
     	try {
     		UserService.updateQuestions(updatedUser);
     		
@@ -157,7 +163,17 @@ Status status = null;
     	User tempUser = new User();
     	tempUser.mapFacebookUser(facebookUser);
     	User user = authentication(tempUser);
-
+    	
+    
+    	
+    	Score score = new Score();
+		try {
+			score = UserService.retrieveScore(user);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
     	if(user != null) {
 	    	//Return JSON.
 	    	ObjectNode result = Json.newObject();
@@ -166,6 +182,7 @@ Status status = null;
 	    	result.put("questions", questionsString);
 	    	result.put("date_created", user.getDateCreated());
 	    	result.put("photo_url", facebookUser.getData().getUrl());
+	    	result.put("score", score.getScore());
 	    	
 	    	status = ok(result);
     	} else {
@@ -218,12 +235,52 @@ Status status = null;
     		status = unauthorized();
     		e.printStackTrace();
     	}
-    	
-    	
     	return status;
-    	
     	
     }
     
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result updateScore() {
+    	//JSON object from request.
+    	JsonNode requestJson = request().body().asJson();
+    	
+    	//Check for un/pw
+    	String ACCESS_TOKEN = requestJson.findPath("ACCESS_TOKEN").textValue();
+    	
+    	//Public facebook client accessor
+    	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
+    	
+    	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
+    	User user = new User();
+    	user.mapFacebookUser(facebookUser);
+    	
+    	JsonNode userQuestions = requestJson.findPath("new_score");
+    	int score_value = Integer.parseInt(userQuestions.textValue());
+    	
+    	Score score = new Score();
+    	score.set_id(user.get_id());
+    	score.setScore(score_value);
+    	
+    	try {
+			UserService.updateScore(score);
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	
+    	
+    	
+    	Status status = null;
+    	
+    	try {
+
+    		status = ok();
+    	} catch (Exception e) {
+    		status = unauthorized();
+    		e.printStackTrace();
+    	}
+    	return status;
+    	
+    }
     
 }
