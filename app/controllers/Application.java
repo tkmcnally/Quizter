@@ -161,12 +161,13 @@ public class Application extends Controller {
     	}
     	questions.add(updatedUser.getQuestions() + "");
     	
-Status status = null;
-    	
+    	Status status = null;
+
+		String screen_density = requestJson.findPath("screen_density").textValue();
     	
     	facebookUser.combine(facebookClient.fetchObject(facebookUser.getId() + "/picture", FacebookUser.class, 
-    			Parameter.with("width", 200), Parameter.with("redirect", false), 
-    			Parameter.with("height", 200), Parameter.with("type", "normal")));
+    			Parameter.with("width", Util.getPictureSize(screen_density)), Parameter.with("redirect", false), 
+    			Parameter.with("height", Util.getPictureSize(screen_density)), Parameter.with("type", "normal")));
     	
     	User tempUser = new User();
     	tempUser.mapFacebookUser(facebookUser);
