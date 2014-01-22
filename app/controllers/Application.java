@@ -36,6 +36,7 @@ import play.libs.Json;
 import play.mvc.*;
 import services.UserService;
 import utils.Constants;
+import utils.Util;
 import views.html.*;
 
 public class Application extends Controller {
@@ -73,11 +74,14 @@ public class Application extends Controller {
     	//Public facebook client accessor
     	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
     	
+    	String screen_density = requestJson.findPath("screen_density").textValue();
+
+    	
     	//Create mock FacebookUser object with info from Facebook.
     	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
     	facebookUser.combine(facebookClient.fetchObject(facebookUser.getId() + "/picture", FacebookUser.class, 
-    			Parameter.with("width", 200), Parameter.with("redirect", false), 
-    			Parameter.with("height", 200), Parameter.with("type", "normal")));
+    			Parameter.with("width", Util.getPictureSize(screen_density)), Parameter.with("redirect", false), 
+    			Parameter.with("height", Util.getPictureSize(screen_density)), Parameter.with("type", "normal")));
     	
     	User tempUser = new User();
     	tempUser.mapFacebookUser(facebookUser);
