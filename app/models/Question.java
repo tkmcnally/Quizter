@@ -1,5 +1,10 @@
 package models;
 
+/**
+ * Data Model representing a Question of a Quizter User.
+ * @author Thomas McNally
+ *
+ */
 public class Question {
 	
 	private String question;

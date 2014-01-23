@@ -1,7 +1,19 @@
 package utils;
 
+/**
+ * Utility class for common operations.
+ * @author Thomas McNally
+ *
+ */
 public class Util {
 	
+	
+	/**
+	 * Data Model representing a Facebook User.
+	 * @param density - Double representing the screen density of the Android phone.
+	 * @return pixel_size - The appropriate pixel size to be used to display the 
+	 * profile picture on that density.
+	 */
 	public static int getPictureSize(String density) {
 		double int_density = Double.parseDouble(density);
 		int pixel_size = 100;
@@ -21,7 +33,6 @@ public class Util {
 		} else if(int_density == 4.0) {
 			pixel_size = 300;
 		}
-		
 		
 		return pixel_size;
 	}

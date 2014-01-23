@@ -4,7 +4,11 @@ import java.util.ArrayList;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
-
+/**
+ * Data Model representing a Quizter User.
+ * @author Thomas McNally
+ *
+ */
 public class User {
 	
 		private String _id;

@@ -2,8 +2,14 @@ package models;
 
 import com.restfb.Facebook;
 
-public class Data {
+public class FacebookData {
 
+	/**
+	 * Data Model representing a Facebook User's data.
+	 * @author Thomas McNally
+	 *
+	 */
+	
 	@Facebook
 	String url;
 	

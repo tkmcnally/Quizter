@@ -3,12 +3,16 @@ package models;
 import com.restfb.Facebook;
 import com.restfb.types.Photo;
 
+
+/**
+ * Data Model representing a Facebook User.
+ * @author Thomas McNally
+ *
+ */
 public class FacebookUser {
 
-  // By default, assumes JSON attribute name is the same as the Java field name  
-
   @Facebook
-  Data data;
+  FacebookData data;
   
   @Facebook
   String id;
@@ -32,11 +36,11 @@ public void setId(String id) {
 	this.id = id;
 }
 
-public Data getData() {
+public FacebookData getData() {
 	return data;
 }
 
-public void setData(Data data) {
+public void setData(FacebookData data) {
 	this.data = data;
 }
 

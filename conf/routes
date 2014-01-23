@@ -2,20 +2,22 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
+# Splash page for application
 GET     /                           controllers.Application.index()
 
-#Testing restFB android
+# API Route to login/register user
 POST	/api/android/facebook/connect	    controllers.Application.connectUser()
 
-#Testing restFB android
-POST	/api/android/facebook/questions	    controllers.Application.updateQuestions()
-
-#Testing restFB android
+# API Route for loading a list of questions
 POST	/api/android/facebook/loadquestions	    controllers.Application.loadQuestions()
 
+# API Route to update user's questions
+POST	/api/android/facebook/questions	    controllers.Application.updateQuestions()
+
+# API Route for updating a user's score
 POST 	/api/android/facebook/updatescore	controllers.Application.updateScore()
 
+# API Route for retrieving a user's leaderboard
 POST	/api/android/facebook/leaderboard	controllers.Application.loadLeaderboard()
 
 # Map static resources from the /public folder to the /assets URL path

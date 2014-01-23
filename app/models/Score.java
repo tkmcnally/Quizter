@@ -1,5 +1,10 @@
 package models;
 
+/**
+ * Data Model representing the Score of a Quizter User.
+ * @author Thomas McNally
+ *
+ */
 public class Score {
 
 	private String _id;
