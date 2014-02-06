@@ -162,6 +162,7 @@ public class UserService {
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
 		int current_player = 0;
 		User user = null;
+		User tempUser = null;
 		
 		List<String> user_ids = new ArrayList<String>();
 		for(JsonObject obj: players) {
@@ -171,9 +172,9 @@ public class UserService {
 		Iterable users = mongoCollection.find("{_id: {$in:#}}", user_ids).as(User.class);
 		Iterator iter = users.iterator();
 		while(iter.hasNext()) {
-			
+			tempUser = (User) iter.next();
 			if(current_player == index) {
-				user = (User) iter.next();
+				user = tempUser;
 				break;
 			} else {
 				current_player++;

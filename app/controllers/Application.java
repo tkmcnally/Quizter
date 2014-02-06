@@ -373,7 +373,6 @@ public class Application extends Controller {
 			e1.printStackTrace();
 		}
     	
-		
     	FacebookUser user_with_picture = facebookClient.fetchObject(user_quizter_friend.get_id() + "/picture", FacebookUser.class, 
     			Parameter.with("width", 400), Parameter.with("redirect", false), 
     			Parameter.with("height", 400), Parameter.with("type", "normal"));
