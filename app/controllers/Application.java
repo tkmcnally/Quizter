@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import models.FacebookUser;
 import models.Question;
@@ -332,16 +333,69 @@ public class Application extends Controller {
     	}
     	
     	try {
-    		
-
-	    	
     		status = ok(child);
     	} catch (Exception e) {
     		status = unauthorized();
-    		e.printStackTrace();
     	}
     	return status;
     }
     
+    
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result fetchPlayer() {
+    	
+    	//long start = System.nanoTime();
+    	//JSON object from request.
+    	JsonNode requestJson = request().body().asJson();
+    	
+    	//Check for un/pw
+    	String ACCESS_TOKEN = requestJson.findPath("ACCESS_TOKEN").textValue();
+    	
+    	String PLAYER_INDEX = requestJson.findPath("player_index").textValue();
+    	int int_player_index = 0;
+    	try {
+    		int_player_index = Integer.parseInt(PLAYER_INDEX);
+    	} catch(NumberFormatException e) {
+    		e.printStackTrace();
+    	}
+    	
+    	//Public facebook client accessor
+    	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
+    	
+    	com.restfb.Connection<JsonObject> myFriends = facebookClient.fetchConnection("me/friends", JsonObject.class, Parameter.with("fields", "picture.height(400),name"));
+    	List<JsonObject> friends_list = myFriends.getData(); 	
+    	
+    	//Query DB for friends with ID
+    	User user_quizter_friend = null;
+    	try {
+			user_quizter_friend = UserService.getPlayerForFriend(friends_list, int_player_index);
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		}
+    	
+		
+    	FacebookUser user_with_picture = facebookClient.fetchObject(user_quizter_friend.get_id() + "/picture", FacebookUser.class, 
+    			Parameter.with("width", 400), Parameter.with("redirect", false), 
+    			Parameter.with("height", 400), Parameter.with("type", "normal"));
+    	ObjectNode result = Json.newObject();
+    	result.put("available_players", "false");	
+    	if(user_quizter_friend != null) {
+    		result.put("_id", user_quizter_friend.get_id());
+        	result.put("name", user_quizter_friend.getName());
+        	result.put("picture_url", user_with_picture.getData().getUrl());
+        	result.put("available_players", "true");	
+     	}
+
+
+    	Status status = null;
+    	try{
+    		status = ok(result);
+    	} catch (Exception e) {
+    		status = unauthorized();
+    	}
+    	
+    	return status;
+    	
+    }
     
 }

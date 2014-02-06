@@ -3,7 +3,10 @@ package services;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
 
 import models.FacebookUser;
 import models.Question;
@@ -20,6 +23,9 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.restfb.json.JsonObject;
+
+import static org.jongo.Oid.withOid;
 
 
 /**
@@ -144,6 +150,36 @@ public class UserService {
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "scores");
 		mongoCollection.save(score);
 		
+	}
+	
+	/**
+	 * Retrieve a list of players for User's friends.
+	 * @param players - List of player's IDs taken from User's friends list.
+	 * @return player_list - A list of Users queried from the DB with ID's matching those in players.
+	 * @throws UnknownHostException - If connection cannot be established to database.
+	 */
+	public static User getPlayerForFriend(List<JsonObject> players, int index) throws UnknownHostException {
+		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+		int current_player = 0;
+		User user = null;
+		
+		List<String> user_ids = new ArrayList<String>();
+		for(JsonObject obj: players) {
+			user_ids.add(obj.getString("id"));
+		}
+
+		Iterable users = mongoCollection.find("{_id: {$in:#}}", user_ids).as(User.class);
+		Iterator iter = users.iterator();
+		while(iter.hasNext()) {
+			user = (User) iter.next();
+			if(current_player == index) {
+				break;
+			} else {
+				current_player++;
+			}
+		}
+		
+		return user;
 	}
 	
 }
