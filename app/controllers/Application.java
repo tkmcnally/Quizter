@@ -326,7 +326,7 @@ public class Application extends Controller {
     		uNode.put("rank", "1");
     		uNode.put("name", u.getString("name"));
     	
-    		uNode.put("picture_url", u.getJsonObject("picture").getJsonObject("data").getString("url"));
+    		uNode.put("photo_url", u.getJsonObject("picture").getJsonObject("data").getString("url"));
     		uNode.put("score", "999");
     		
     		apps.add(uNode);
@@ -382,7 +382,7 @@ public class Application extends Controller {
     	if(user_quizter_friend != null) {
     		result.put("_id", user_quizter_friend.get_id());
         	result.put("name", user_quizter_friend.getName());
-        	result.put("picture_url", user_with_picture.getData().getUrl());
+        	result.put("photo_url", user_with_picture.getData().getUrl());
         	result.put("available_players", "true");	
      	}
 
