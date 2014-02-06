@@ -171,8 +171,9 @@ public class UserService {
 		Iterable users = mongoCollection.find("{_id: {$in:#}}", user_ids).as(User.class);
 		Iterator iter = users.iterator();
 		while(iter.hasNext()) {
-			user = (User) iter.next();
+			
 			if(current_player == index) {
+				user = (User) iter.next();
 				break;
 			} else {
 				current_player++;
