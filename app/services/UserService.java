@@ -176,8 +176,10 @@ public class UserService {
 			if(current_player == index) {
 				user = tempUser;
 				break;
-			} else {
+			} else if(current_player < index) {
 				current_player++;
+			} else {
+				break;
 			}
 		}
 		
