@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -326,7 +327,7 @@ public class Application extends Controller {
     		uNode.put("rank", "1");
     		uNode.put("name", u.getString("name"));
     	
-    		uNode.put("photo_url", u.getJsonObject("picture").getJsonObject("data").getString("url"));
+    		uNode.put("picture_url", u.getJsonObject("picture").getJsonObject("data").getString("url"));
     		uNode.put("score", "999");
     		
     		apps.add(uNode);
@@ -373,15 +374,16 @@ public class Application extends Controller {
 			e1.printStackTrace();
 		}
     	
+		
+    	FacebookUser user_with_picture = facebookClient.fetchObject(user_quizter_friend.get_id() + "/picture", FacebookUser.class, 
+    			Parameter.with("width", 400), Parameter.with("redirect", false), 
+    			Parameter.with("height", 400), Parameter.with("type", "normal"));
     	ObjectNode result = Json.newObject();
     	result.put("available_players", "false");	
     	if(user_quizter_friend != null) {
-    		FacebookUser user_with_picture = facebookClient.fetchObject(user_quizter_friend.get_id() + "/picture", FacebookUser.class, 
-        			Parameter.with("width", 400), Parameter.with("redirect", false), 
-        			Parameter.with("height", 400), Parameter.with("type", "normal"));
     		result.put("_id", user_quizter_friend.get_id());
         	result.put("name", user_quizter_friend.getName());
-        	result.put("photo_url", user_with_picture.getData().getUrl());
+        	result.put("picture_url", user_with_picture.getData().getUrl());
         	result.put("available_players", "true");	
      	}
 
@@ -396,5 +398,166 @@ public class Application extends Controller {
     	return status;
     	
     }
+    
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result getQuestionsForQuiz() {
+    	
+    	//JSON object from request.
+    	JsonNode requestJson = request().body().asJson();
+    	
+    	//Check for un/pw
+    	String PLAYER_ID = requestJson.findPath("player_id").textValue();
+    	
+    	//Create temporary user with ID from JSON
+    	User tempUser = new User();
+    	tempUser.set_id(PLAYER_ID);
+    	
+    	//Retrieve User from database
+    	User PLAYER = null;
+    	try {
+			PLAYER = UserService.userAlreadyExists(tempUser);	
+    	} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		}
+    	
+    	//Construct question list
+		BasicDBList questionDBList = PLAYER.getQuestions();
+		BasicDBList filtered_questions = new BasicDBList();
+		for(Object obj: questionDBList) {
+			LinkedHashMap qa = (LinkedHashMap) obj;
+			qa.remove("answer");
+			filtered_questions.add(qa);
+		}
+
+		
+		//Construct JSON to return
+    	ObjectNode result = Json.newObject();
+    	result.put("questions", filtered_questions.toString());
+    	result.put("player_id", PLAYER_ID);
+    
+
+    	Status status = null;
+    	try{
+    		status = ok(result);
+    	} catch (Exception e) {
+    		status = unauthorized();
+    	}
+    	
+    	
+    	return status;
+    }
+    
+
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result submitQuiz() {
+    	
+
+		String questionKey = null;
+		String questionsString = null;
+		
+    	//JSON object from request.
+    	JsonNode requestJson = request().body().asJson();
+    	
+    	//Check for un/pw
+    	String ACCESS_TOKEN = requestJson.findPath("ACCESS_TOKEN").textValue();
+    	
+    	//Public facebook client accessor
+    	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
+    	
+    	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
+    	User updatedUser = new User();
+    	updatedUser.mapFacebookUser(facebookUser);
+    
+    	JsonNode userQuestions = requestJson.findPath("question_answer");
+    	
+    	List<String> questions = new ArrayList<String>();
+    	questions.add(userQuestions.elements() + "");
+    	
+    	String resultString = userQuestions.toString();
+    	resultString = resultString.replace(":\"[", ": [");
+    	resultString = resultString.replace("]\"", "]");
+    	resultString =  resultString.replace("\\\"", "\"");
+    	StringBuilder rS = new StringBuilder(resultString);
+    	//rS.delete(0, 1);	
+        
+        questionsString = rS.toString();
+		Object o = com.mongodb.util.JSON.parse(questionsString);
+		BasicDBList dbObj = (BasicDBList) o;
+
+    	updatedUser.setQuestions(dbObj);
+    	
+    	
+    	User current_user = null;
+		try {
+			current_user = UserService.userAlreadyExists(updatedUser);
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	
+    	List<String> old_questions = new ArrayList<String>();
+    	List<String> old_answers = new ArrayList<String>();
+    	for(Object obj: updatedUser.getQuestions()) {
+    		LinkedHashMap lhm = (LinkedHashMap) obj;
+    		old_questions.add((String) lhm.get("question"));
+    		old_answers.add((String) lhm.get("answer"));
+    	}
+    	
+    	List<String> new_questions = new ArrayList<String>();
+    	List<String> new_answers = new ArrayList<String>();
+    	for(Object obj: current_user.getQuestions()) {
+    		LinkedHashMap lhm = (LinkedHashMap) obj;
+    		new_questions.add((String) lhm.get("question"));
+    		new_answers.add((String) lhm.get("answer"));
+    	}
+
+    	ObjectNode result = Json.newObject();
+    	if(new_questions.containsAll(old_questions)) {
+    		result.put("valid", true);
+    	
+	    	BasicDBList question_overview = new BasicDBList();
+	    	int score = 0;
+	    	for(int i = 0; i < old_answers.size(); i++) {
+	    		if(!wordMatch(old_answers.get(i), new_answers.get(i))) {
+	    			BasicDBObject obj = new BasicDBObject(3);
+	    			obj.put("question", old_questions.get(i));
+	    			obj.put("given_answer", old_answers.get(i));
+	    			obj.put("correct_answer", new_answers.get(i));
+	    			question_overview.add(obj);
+	    		} else {
+	    			score++;
+	    		}
+	    	}
+	    	result.put("score", score);
+	    	result.put("marked_questions", question_overview.toString());
+    	
+    		
+    	} else {
+    		result.put("valid", false);
+    	}
+    	result.put("old", old_questions.toString());
+    	result.put("new", new_questions.toString());
+    	
+    	Status status = null;
+    	try{
+    		status = ok(result);
+    	} catch (Exception e) {
+    		status = unauthorized();
+    	}
+    	
+    	
+    	return status;
+    }
+    
+    
+    private static boolean wordMatch(String one, String two) {
+    	if((one.toLowerCase()).equals(two.toLowerCase())) {
+    		return true;
+    	} 
+    	
+    	return false;   	
+    }
+    
+   
     
 }
