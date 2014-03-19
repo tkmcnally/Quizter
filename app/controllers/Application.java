@@ -381,7 +381,7 @@ public class Application extends Controller {
     	ObjectNode result = Json.newObject();
     	result.put("available_players", "false");	
     	if(user_quizter_friend != null) {
-    		result.put("_id", user_quizter_friend.get_id());
+    		result.put("id", user_quizter_friend.get_id());
         	result.put("name", user_quizter_friend.getName());
         	result.put("photo_url", user_with_picture.getData().getUrl());
         	result.put("available_players", "true");	
