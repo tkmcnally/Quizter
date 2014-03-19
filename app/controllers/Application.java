@@ -460,14 +460,16 @@ public class Application extends Controller {
     	
     	//Check for un/pw
     	String ACCESS_TOKEN = requestJson.findPath("ACCESS_TOKEN").textValue();
+
+    	String PLAYER_ID = requestJson.findPath("player_id").textValue();
     	
     	//Public facebook client accessor
     	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
     	
     	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
-    	User updatedUser = new User();
-    	updatedUser.mapFacebookUser(facebookUser);
-    
+    	//User updatedUser = new User();
+    	//updatedUser.mapFacebookUser(facebookUser);
+  
     	JsonNode userQuestions = requestJson.findPath("question_answer");
     	
     	List<String> questions = new ArrayList<String>();
@@ -484,12 +486,18 @@ public class Application extends Controller {
 		Object o = com.mongodb.util.JSON.parse(questionsString);
 		BasicDBList dbObj = (BasicDBList) o;
 
+		
+		User updatedUser = new User();
     	updatedUser.setQuestions(dbObj);
     	
+
+    	//Create temporary user with ID from JSON
+    	User tempUser = new User();
+    	tempUser.set_id(PLAYER_ID);
     	
     	User current_user = null;
 		try {
-			current_user = UserService.userAlreadyExists(updatedUser);
+			current_user = UserService.userAlreadyExists(tempUser);
 		} catch (UnknownHostException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
