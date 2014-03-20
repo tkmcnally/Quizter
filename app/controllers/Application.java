@@ -543,8 +543,6 @@ public class Application extends Controller {
     	} else {
     		result.put("valid", false);
     	}
-    	result.put("old", old_questions.toString());
-    	result.put("new", new_questions.toString());
     	
     	Status status = null;
     	try{
