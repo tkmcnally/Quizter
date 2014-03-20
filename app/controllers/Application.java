@@ -44,6 +44,7 @@ import services.ScoreComparator;
 import services.UserService;
 import utils.Constants;
 import utils.Util;
+import utils.WordMatcher;
 import views.html.*;
 
 public class Application extends Controller {
@@ -558,7 +559,7 @@ public class Application extends Controller {
 	    		BasicDBObject obj = new BasicDBObject(3);
 	    		obj.put("question", old_questions.get(i));
     			obj.put("given_answer", old_answers.get(i));
-	    		if(!wordMatch(old_answers.get(i), new_answers.get(i))) {
+	    		if(!WordMatcher.doesMatch(old_answers.get(i), new_answers.get(i))) {
 	    			obj.put("correct_answer", "false");  			
 	    		} else {
 	    			obj.put("correct_answer", "true");
@@ -587,9 +588,7 @@ public class Application extends Controller {
     
     
     private static boolean wordMatch(String one, String two) {
-    	if((one.toLowerCase()).equals(two.toLowerCase())) {
-    		return true;
-    	} 
+    	
     	
     	return false;   	
     }
