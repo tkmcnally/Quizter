@@ -596,7 +596,7 @@ public class Application extends Controller {
     public static class ScoreComparator implements Comparator<User> {
         @Override
         public int compare(User a, User b) {
-            return Integer.compare(Integer.parseInt(a.getScore()), Integer.parseInt(a.getScore()));
+            return java.lang.Integer.compare(java.lang.Integer.parseInt(a.getScore()), java.lang.Integer.parseInt(a.getScore()));
         }
     }
     
