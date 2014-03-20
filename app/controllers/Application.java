@@ -40,6 +40,7 @@ import com.restfb.types.FriendList;
 import play.*;
 import play.libs.Json;
 import play.mvc.*;
+import services.ScoreComparator;
 import services.UserService;
 import utils.Constants;
 import utils.Util;
@@ -593,12 +594,6 @@ public class Application extends Controller {
     	return false;   	
     }
     
-    public static class ScoreComparator implements Comparator<User> {
-        @Override
-        public int compare(User a, User b) {
-            return java.lang.Integer.compare(java.lang.Integer.parseInt(a.getScore()), java.lang.Integer.parseInt(a.getScore()));
-        }
-    }
     
     public static <E> Collection<E> makeCollection(Iterable<E> iter) {
         Collection<E> list = new ArrayList<E>();
