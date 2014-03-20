@@ -8,6 +8,7 @@ import models.User;
 public class ScoreComparator implements Comparator<User> {
     @Override
     public int compare(User a, User b) {
-        return Integer.compare(Integer.parseInt(a.getScore()), Integer.parseInt(a.getScore()));
+    	int return_num = Integer.compare(Integer.parseInt(a.getScore()), Integer.parseInt(a.getScore()));
+        return return_num;
     }
 }
