@@ -3,6 +3,10 @@ package controllers;
 import java.io.PrintStream;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -321,18 +325,42 @@ public class Application extends Controller {
     	
     	ArrayNode apps = child.putArray("leaderboard");
     	
-    	for(JsonObject u: myFriends.getData()) {
-    		ObjectNode uNode = Json.newObject();
-    		uNode.put("id", u.getString("id"));
-    		uNode.put("rank", "1");
-    		uNode.put("name", u.getString("name"));
     	
-    		uNode.put("photo_url", u.getJsonObject("picture").getJsonObject("data").getString("url"));
-    		uNode.put("score", "999");
+		HashMap<String, HashMap<String, String>> friends_as_users = new HashMap<String, HashMap<String, String>>();	
+    	for(JsonObject u: myFriends.getData()) {
+    		   		
+    		HashMap<String, String> map1 = new HashMap<String, String>();
+    		map1.put("photo", u.getJsonObject("picture").getJsonObject("data").getString("url"));
+    		map1.put("name", u.getString("name"));
     		
-    		apps.add(uNode);
+    		friends_as_users.put(u.getString("id"), map1);
     	}
     	
+    	Iterable<User> db_users = null;
+		try {
+			db_users = UserService.getFriendsOfPlayer(myFriends.getData());
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		if(db_users != null) {
+	    	List<User> users = (List<User>) makeCollection(db_users);
+	    	Collections.sort(users, new ScoreComparator());
+	    	for(int i = 0; i < users.size(); i++) {
+	    		
+	    		User temp_user = users.get(i);
+	    		
+	    		ObjectNode uNode = Json.newObject();
+	    		uNode.put("id", user.get_id());
+	    		uNode.put("rank", i + 1);
+	    		uNode.put("name", friends_as_users.get(temp_user.get_id()).get("name")); 	
+	    		uNode.put("photo_url", friends_as_users.get(temp_user.get_id()).get("photo"));
+	    		uNode.put("score", temp_user.getScore());
+	    		apps.add(uNode);
+	    	}
+		}
+
     	try {
     		status = ok(child);
     	} catch (Exception e) {
@@ -565,6 +593,20 @@ public class Application extends Controller {
     	return false;   	
     }
     
+    public static class ScoreComparator implements Comparator<User> {
+        @Override
+        public int compare(User a, User b) {
+            return Integer.compare(Integer.parseInt(a.getScore()), Integer.parseInt(a.getScore()));
+        }
+    }
+    
+    public static <E> Collection<E> makeCollection(Iterable<E> iter) {
+        Collection<E> list = new ArrayList<E>();
+        for (E item : iter) {
+            list.add(item);
+        }
+        return list;
+    }
    
     
 }

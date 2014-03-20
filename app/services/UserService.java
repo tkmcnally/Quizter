@@ -186,4 +186,21 @@ public class UserService {
 		return user;
 	}
 	
+	public static Iterable<User> getFriendsOfPlayer(List<JsonObject> players) throws UnknownHostException {
+		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+		int current_player = 0;
+		User user = null;
+		User tempUser = null;
+		
+		List<String> user_ids = new ArrayList<String>();
+		for(JsonObject obj: players) {
+			user_ids.add(obj.getString("id"));
+		}
+
+		Iterable<User> users = mongoCollection.find("{_id: {$in:#}}", user_ids).as(User.class);
+		Iterator<User> iter = users.iterator();
+		
+		return users;
+	}
+	
 }

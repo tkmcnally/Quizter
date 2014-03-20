@@ -26,6 +26,8 @@ public class User {
 		
 		private String picture_url;
 		
+		private String score;
+
 		public void mapFacebookUser(FacebookUser facebookUser) {
 			this._id = facebookUser.id;
 			this.name = facebookUser.name;
@@ -77,6 +79,14 @@ public class User {
 
 		public void setPicture_url(String picture_url) {
 			this.picture_url = picture_url;
+		}
+		
+		public String getScore() {
+			return score;
+		}
+
+		public void setScore(String score) {
+			this.score = score;
 		}
 
 
