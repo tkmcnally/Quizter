@@ -526,15 +526,16 @@ public class Application extends Controller {
 	    	BasicDBList question_overview = new BasicDBList();
 	    	int score = 0;
 	    	for(int i = 0; i < old_answers.size(); i++) {
+	    		BasicDBObject obj = new BasicDBObject(3);
+	    		obj.put("question", old_questions.get(i));
+    			obj.put("given_answer", old_answers.get(i));
 	    		if(!wordMatch(old_answers.get(i), new_answers.get(i))) {
-	    			BasicDBObject obj = new BasicDBObject(3);
-	    			obj.put("question", old_questions.get(i));
-	    			obj.put("given_answer", old_answers.get(i));
-	    			obj.put("correct_answer", new_answers.get(i));
-	    			question_overview.add(obj);
+	    			obj.put("correct_answer", "false");  			
 	    		} else {
+	    			obj.put("correct_answer", "true");
 	    			score++;
 	    		}
+	    		question_overview.add(obj);
 	    	}
 	    	result.put("score", score);
 	    	result.put("marked_questions", question_overview.toString());
