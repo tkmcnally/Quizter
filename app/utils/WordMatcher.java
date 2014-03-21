@@ -1,7 +1,6 @@
 package utils;
 
 public class WordMatcher {
-	
 		 
     public static int distance(String a, String b) {
         a = a.toLowerCase();
@@ -18,8 +17,6 @@ public class WordMatcher {
         
         System.out.println(a);
         System.out.println(b);
-        
-        
         
         // i == 0
         int [] costs = new int [b.length() + 1];

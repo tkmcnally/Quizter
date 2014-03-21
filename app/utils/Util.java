@@ -1,5 +1,12 @@
 package utils;
 
+import java.util.Iterator;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 /**
  * Utility class for common operations.
  * @author Thomas McNally
@@ -35,6 +42,28 @@ public class Util {
 		}
 		
 		return pixel_size;
+	}
+	
+	public static ObjectNode hashQuestions(JsonNode node) {
+		Iterator<JsonNode> iter = node.elements();
+
+		ObjectNode o = JsonNodeFactory.instance.objectNode();
+		ArrayNode a = o.putArray("questions");
+		while(iter.hasNext()) {
+			JsonNode n = iter.next();
+			String Q = n.get("question").textValue();
+			String A = n.get("answer").textValue();
+			String hash = (Q + A).hashCode() + "";
+
+			ObjectNode obj = JsonNodeFactory.instance.objectNode();
+			obj.put("question", Q);
+			obj.put("answer", A);
+			obj.put("q_id", hash);
+			
+			a.add(obj);
+		}
+		return o;
+		
 	}
 
 }

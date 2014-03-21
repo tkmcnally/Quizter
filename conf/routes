@@ -14,9 +14,6 @@ POST	/api/android/facebook/loadquestions	    controllers.Application.loadQuestio
 # API Route to update user's questions
 POST	/api/android/facebook/questions	    controllers.Application.updateQuestions()
 
-# API Route for updating a user's score
-POST 	/api/android/facebook/updatescore	controllers.Application.updateScore()
-
 # API Route for retrieving a user's leaderboard
 POST	/api/android/facebook/leaderboard	controllers.Application.loadLeaderboard()
 

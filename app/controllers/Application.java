@@ -17,6 +17,7 @@ import models.FacebookUser;
 import models.Question;
 import models.Score;
 import models.User;
+import models.UserAnsweredQuestions;
 
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
@@ -95,14 +96,6 @@ public class Application extends Controller {
     	tempUser.mapFacebookUser(facebookUser);
     	User user = authentication(tempUser);
     	
-    	Score score = new Score();
-		try {
-			score = UserService.retrieveScore(user);
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
     	if(user != null) {
 	    	//Return JSON.
 	    	ObjectNode result = Json.newObject();
@@ -111,7 +104,7 @@ public class Application extends Controller {
 	    	result.put("questions", user.getQuestions().toString());
 	    	result.put("date_created", user.getDateCreated());
 	    	result.put("photo_url", facebookUser.getData().getUrl());
-	    	result.put("score", score.getScore());
+	    	result.put("score", user.getScore());
 	    	
 	    	status = ok(result);
     	} else {
@@ -141,6 +134,8 @@ public class Application extends Controller {
     
     	JsonNode userQuestions = requestJson.findPath("updated_questions");
     	
+    	userQuestions = Util.hashQuestions(userQuestions);
+    	
     	List<String> questions = new ArrayList<String>();
     	questions.add(userQuestions.elements() + "");
     	
@@ -149,14 +144,19 @@ public class Application extends Controller {
     	resultString = resultString.replace("]\"", "]");
     	resultString =  resultString.replace("\\\"", "\"");
     	StringBuilder rS = new StringBuilder(resultString);
-    	rS.delete(0, 1);	
+    	//rS.delete(0, 1);	
         
-        questionsString = rS.toString();
-		Object o = com.mongodb.util.JSON.parse(questionsString);
-		BasicDBList dbObj = (BasicDBList) o;
-
-    	updatedUser.setQuestions(dbObj);
+    	try {
     
+	        questionsString = rS.toString();
+			Object o = com.mongodb.util.JSON.parse(questionsString);
+			BasicDBList dbObj = (BasicDBList) ((BasicDBObject) o).get("questions");
+	
+	    	updatedUser.setQuestions(dbObj);
+    	} catch (Exception e) {
+    		Status status = null;
+    		return (status = ok(e.toString() + " " + e.getMessage() + "\n" + questionsString));
+    	}
     	try {
     		UserService.updateQuestions(updatedUser);
     		
@@ -182,14 +182,7 @@ public class Application extends Controller {
     	User user = authentication(tempUser);
     	
     
-    	
-    	Score score = new Score();
-		try {
-			score = UserService.retrieveScore(user);
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    
 		
     	if(user != null) {
 	    	//Return JSON.
@@ -199,7 +192,7 @@ public class Application extends Controller {
 	    	result.put("questions", questionsString);
 	    	result.put("date_created", user.getDateCreated());
 	    	result.put("photo_url", facebookUser.getData().getUrl());
-	    	result.put("score", score.getScore());
+	    	result.put("score", user.getScore());
 	    	
 	    	status = ok(result);
     	} else {
@@ -248,50 +241,6 @@ public class Application extends Controller {
 
 	    	status = ok(result);
     		
-    	} catch (Exception e) {
-    		status = unauthorized();
-    		e.printStackTrace();
-    	}
-    	return status;
-    	
-    }
-    
-    @BodyParser.Of(BodyParser.Json.class)
-    public static Result updateScore() {
-    	//JSON object from request.
-    	JsonNode requestJson = request().body().asJson();
-    	
-    	//Check for un/pw
-    	String ACCESS_TOKEN = requestJson.findPath("ACCESS_TOKEN").textValue();
-    	
-    	//Public facebook client accessor
-    	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
-    	
-    	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
-    	User user = new User();
-    	user.mapFacebookUser(facebookUser);
-    	
-    	JsonNode userQuestions = requestJson.findPath("new_score");
-    	int score_value = Integer.parseInt(userQuestions.textValue());
-    	
-    	Score score = new Score();
-    	score.set_id(user.get_id());
-    	score.setScore(score_value + "");
-    	
-    	try {
-			UserService.updateScore(score);
-		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-    	
-    	
-    	
-    	Status status = null;
-    	
-    	try {
-
-    		status = ok();
     	} catch (Exception e) {
     		status = unauthorized();
     		e.printStackTrace();
@@ -510,7 +459,7 @@ public class Application extends Controller {
     	resultString = resultString.replace("]\"", "]");
     	resultString =  resultString.replace("\\\"", "\"");
     	StringBuilder rS = new StringBuilder(resultString);
-    	rS.delete(0, 1);	
+    	//rS.delete(0, 1);	
         
         questionsString = rS.toString();
 		Object o = com.mongodb.util.JSON.parse(questionsString);
@@ -549,6 +498,16 @@ public class Application extends Controller {
     		new_answers.add((String) lhm.get("answer"));
     	}
 
+    	
+    	//GET ANSWERED QUESTIONS
+    	UserAnsweredQuestions questionsAnswered = null;
+    	try {
+			questionsAnswered = UserService.getQuestionsAnswered(current_user);
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	
     	ObjectNode result = Json.newObject();
     	if(new_questions.containsAll(old_questions)) {
     		result.put("valid", true);
@@ -562,14 +521,37 @@ public class Application extends Controller {
 	    		if(!WordMatcher.doesMatch(old_answers.get(i), new_answers.get(i))) {
 	    			obj.put("correct_answer", "false");  			
 	    		} else {
+	    			String hash = (new_answers.get(i) + new_questions.get(i)).hashCode() + "";
+	    			if(!questionsAnswered.getQuestionsAnswered().contains(hash)) {
+	    				obj.put("already_answered", "false");
+	    				questionsAnswered.getQuestionsAnswered().add(hash);
+	    				score++;
+	    			} else {			
+	    				obj.put("already_answered", "true");
+	    			}
 	    			obj.put("correct_answer", "true");
-	    			score++;
 	    		}
 	    		question_overview.add(obj);
 	    	}
 	    	result.put("score", score);
 	    	result.put("marked_questions", question_overview.toString());
     	
+	    	
+	    	current_user.setScore(addScore(current_user, score));
+	    	
+	    	//UPDATE USERS SCORE
+	    	try {
+				UserService.updateScore(current_user);
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}
+	    	
+	    	//UPDATE USERS ANSWERED QUESTIONS
+	    	try {
+				UserService.updateAnswersQuestions(questionsAnswered);
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}
     		
     	} else {
     		result.put("valid", false);
@@ -586,20 +568,16 @@ public class Application extends Controller {
     	return status;
     }
     
-    
-    private static boolean wordMatch(String one, String two) {
-    	
-    	
-    	return false;   	
-    }
-    
-    
     public static <E> Collection<E> makeCollection(Iterable<E> iter) {
         Collection<E> list = new ArrayList<E>();
         for (E item : iter) {
             list.add(item);
         }
         return list;
+    }
+    
+    public static String addScore(User user, int score) {
+    	return (Integer.parseInt(user.getScore()) + score) + "";
     }
    
     

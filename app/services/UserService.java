@@ -12,6 +12,7 @@ import models.FacebookUser;
 import models.Question;
 import models.Score;
 import models.User;
+import models.UserAnsweredQuestions;
 
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
@@ -130,26 +131,10 @@ public class UserService {
 		Iterable<Question> questionList = mongoCollection.find("{_id: {$gt: " + (index - 10) + ", $lte: " + index + "}}").as(Question.class);
 		return questionList;
 	}
-	
-	/**
-	 * 
-	 * @param user - The requested user's score.
-	 * @return score - Score associated with user.
-	 * @throws UnknownHostException - If connection cannot be established to database.
-	 */
-	public static Score retrieveScore(User user) throws UnknownHostException {
-		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "scores");
-		
-		Score score = mongoCollection.findOne("{_id: '" + user.get_id() +"'}").as(Score.class);
-		return score;
-	}
-	
-	// TODO
-	public static void updateScore(Score score) throws UnknownHostException {
-		
-		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "scores");
-		mongoCollection.save(score);
-		
+
+	public static void updateScore(User user) throws UnknownHostException {
+		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+		mongoCollection.update("{_id: '" + user.get_id() + "'}").with("{$set: {score: " + user.getScore() + "}}");
 	}
 	
 	/**
@@ -203,4 +188,17 @@ public class UserService {
 		return users;
 	}
 	
+	
+	public static UserAnsweredQuestions getQuestionsAnswered(User user) throws UnknownHostException {
+		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+		
+		UserAnsweredQuestions userAnsweredQuestions = mongoCollection.findOne("{_id: '" + user.get_id() +"'}").as(UserAnsweredQuestions.class);
+		return userAnsweredQuestions;
+		
+	}
+	
+public static void updateAnswersQuestions(UserAnsweredQuestions userAnsweredQuestion) throws UnknownHostException {
+		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+		mongoCollection.update("{_id: '" + userAnsweredQuestion.get_id() + "'}").with("{$set: {questionsAnswered: " + userAnsweredQuestion.getQuestionsAnswered() + "}}");
+	}
 }
