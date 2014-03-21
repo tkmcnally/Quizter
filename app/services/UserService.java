@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import models.FacebookUser;
+import models.NewUser;
 import models.Question;
 import models.Score;
 import models.User;
@@ -73,11 +74,12 @@ public class UserService {
 	 * @throws UnknownHostException - If connection cannot be established to database.
 	 */
 	public static User registerUser(User user) throws UnknownHostException {
-		User newUser = user;
+		NewUser newUser = (NewUser) user;
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Calendar cal = Calendar.getInstance();
 		newUser.setDateCreated(dateFormat.format(cal.getTime()));
+		newUser.setScore("0");
 		
 		BasicDBList newList = new BasicDBList();
 		for(int i = 0; i < 5; i++) {
@@ -86,19 +88,9 @@ public class UserService {
 			obj.put("answer", "");
 			newList.add(obj);
 		}
-		
-		user.setQuestions(newList);
-		
+
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
 		mongoCollection.insert(newUser);
-		
-		
-		Score score = new Score();
-		score.set_id(user.get_id());
-		score.setScore(10 + "");
-		
-		mongoCollection = getConnection(Constants.DB_NAME, "scores");
-		mongoCollection.insert(score);
 		
 		return newUser;
 	}
