@@ -15,9 +15,6 @@ public class WordMatcher {
         a = a.replace("_", "");      
         b = b.replace("_", "");
         
-        System.out.println(a);
-        System.out.println(b);
-        
         // i == 0
         int [] costs = new int [b.length() + 1];
         for (int j = 0; j < costs.length; j++)
@@ -36,15 +33,16 @@ public class WordMatcher {
     }
     
     public static boolean doesMatch(String a, String b) {
-    	if(distance(a, b) <= 1) {
-    		return true;
+    	if(a != null && !a.isEmpty() && b != null && !b.isEmpty()) {
+	    	if(distance(a, b) <= 1) {
+	    		return true;
+	    	}
     	}
-    	
     	return false;
     }
  
     public static void main(String [] args) {
-        String [] data = { "kitten", "Kitt_?>en's", "saturday", "sunday", "rosettacode", "raisethysword" };
+        String [] data = { "kitten", "", "saturday", "sunday", "rosettacode", "raisethysword" };
         for (int i = 0; i < data.length; i += 2)
             System.out.println("distance(" + data[i] + ", " + data[i+1] + ") = " + distance(data[i], data[i+1]));
     }

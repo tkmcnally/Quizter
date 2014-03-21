@@ -2,6 +2,7 @@ package models;
 
 import java.util.ArrayList;
 
+import org.jongo.marshall.jackson.oid.Id;
 import org.jongo.marshall.jackson.oid.ObjectId;
 
 import com.mongodb.BasicDBList;
@@ -13,7 +14,7 @@ import com.mongodb.BasicDBObject;
  */
 public class User {
 	
-		@ObjectId
+		@Id
 		private String _id;
 
 		private String email;

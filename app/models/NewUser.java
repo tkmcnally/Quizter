@@ -28,4 +28,9 @@ public class NewUser extends User {
 		this.questionsAnswered = questionsAnswered;
 	}
 	
+	public NewUser mapUser(User user) {
+		this.setName(user.getName());
+		this.set_id(user.get_id());
+		return this;
+	}
 }
