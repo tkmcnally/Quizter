@@ -1,5 +1,6 @@
 package models;
 
+import org.jongo.marshall.jackson.oid.Id;
 import org.jongo.marshall.jackson.oid.ObjectId;
 
 import com.mongodb.BasicDBList;
