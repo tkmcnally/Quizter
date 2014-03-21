@@ -93,7 +93,7 @@ public class UserService {
 		MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
 		mongoCollection.insert(newUser);
 		
-		mongoCollection.update("{_id: '" + user.get_id() + "'}").with("{$set: {answeredQuestions: }}");
+		mongoCollection.update("{_id: '" + user.get_id() + "'}").with("{$set: {answeredQuestions: [] }}");
 		
 		return newUser;
 	}

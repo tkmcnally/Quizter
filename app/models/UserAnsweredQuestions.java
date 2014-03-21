@@ -6,7 +6,7 @@ import com.mongodb.BasicDBList;
 
 public class UserAnsweredQuestions {
 	
-	@ObjectId
+	@Id
 	private String _id;
 	
 	private BasicDBList questionsAnswered;
