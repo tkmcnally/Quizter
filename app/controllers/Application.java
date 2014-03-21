@@ -522,7 +522,7 @@ public class Application extends Controller {
 	    			obj.put("correct_answer", "false");  			
 	    		} else {
 	    			String hash = (new_answers.get(i) + new_questions.get(i)).hashCode() + "";
-	    			if(!questionsAnswered.getQuestionsAnswered().contains(hash)) {
+	    			if(questionsAnswered == null || !questionsAnswered.getQuestionsAnswered().contains(hash)) {
 	    				obj.put("already_answered", "false");
 	    				questionsAnswered.getQuestionsAnswered().add(hash);
 	    				score++;
