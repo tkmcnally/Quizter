@@ -446,8 +446,8 @@ public class Application extends Controller {
     	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
     	
     	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
-    	//User updatedUser = new User();
-    	//updatedUser.mapFacebookUser(facebookUser);
+    	User current_user = new User();
+    	current_user.mapFacebookUser(facebookUser);
   
     	JsonNode userQuestions = requestJson.findPath("question_answer");
     	
@@ -474,9 +474,10 @@ public class Application extends Controller {
     	User tempUser = new User();
     	tempUser.set_id(PLAYER_ID);
     	
-    	User current_user = null;
+    	User quiz_player = null;
 		try {
-			current_user = UserService.userAlreadyExists(tempUser);
+			quiz_player = UserService.userAlreadyExists(tempUser);
+			current_user = UserService.userAlreadyExists(current_user);
 		} catch (UnknownHostException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -492,7 +493,7 @@ public class Application extends Controller {
     	
     	List<String> new_questions = new ArrayList<String>();
     	List<String> new_answers = new ArrayList<String>();
-    	for(Object obj: current_user.getQuestions()) {
+    	for(Object obj: quiz_player.getQuestions()) {
     		LinkedHashMap lhm = (LinkedHashMap) obj;
     		new_questions.add((String) lhm.get("question"));
     		new_answers.add((String) lhm.get("answer"));
@@ -522,7 +523,8 @@ public class Application extends Controller {
 	    			obj.put("correct_answer", "false");  			
 	    		} else {
 	    			String hash = (new_answers.get(i) + new_questions.get(i)).hashCode() + "";
-	    			if(questionsAnswered.getQuestionsAnswered() == null) {
+	    			System.out.println(questionsAnswered.getQuestionsAnswered() );
+	    			if(questionsAnswered == null || questionsAnswered.getQuestionsAnswered() == null || questionsAnswered.getQuestionsAnswered().isEmpty()) {
 	    				obj.put("already_answered", "false");
 	    				questionsAnswered.setQuestionsAnswered(new BasicDBList());
 	    				questionsAnswered.getQuestionsAnswered().add(hash);
