@@ -134,8 +134,6 @@ public class Application extends Controller {
     
     	JsonNode userQuestions = requestJson.findPath("updated_questions");
     	
-    	userQuestions = Util.hashQuestions(userQuestions);
-    	
     	List<String> questions = new ArrayList<String>();
     	questions.add(userQuestions.elements() + "");
     	
@@ -144,18 +142,25 @@ public class Application extends Controller {
     	resultString = resultString.replace("]\"", "]");
     	resultString =  resultString.replace("\\\"", "\"");
     	StringBuilder rS = new StringBuilder(resultString);
-    	//rS.delete(0, 1);	
+    	rS.delete(0, 1);	
         
     	try {
     
 	        questionsString = rS.toString();
+	        
+	        
+	     
 			Object o = com.mongodb.util.JSON.parse(questionsString);
-			BasicDBList dbObj = (BasicDBList) ((BasicDBObject) o).get("questions");
-	
-	    	updatedUser.setQuestions(dbObj);
+			System.out.println(o);
+			BasicDBList obj = (BasicDBList) o;
+			   System.out.println("BasicDBList = " + obj.toString());
+		        
+	     
+	    	updatedUser.setQuestions(Util.hashQuestions(obj));
     	} catch (Exception e) {
+    		e.printStackTrace();
     		Status status = null;
-    		return (status = ok(e.toString() + " " + e.getMessage() + "\n" + questionsString));
+    		return (status = ok(e.toString() + " " + e.getMessage() + " " + e.getStackTrace().toString() + " "+ "\n" + questionsString));
     	}
     	try {
     		UserService.updateQuestions(updatedUser);

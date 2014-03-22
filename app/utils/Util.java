@@ -1,11 +1,14 @@
 package utils;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 
 /**
  * Utility class for common operations.
@@ -44,26 +47,21 @@ public class Util {
 		return pixel_size;
 	}
 	
-	public static ObjectNode hashQuestions(JsonNode node) {
-		Iterator<JsonNode> iter = node.elements();
-
-		ObjectNode o = JsonNodeFactory.instance.objectNode();
-		ArrayNode a = o.putArray("questions");
-		while(iter.hasNext()) {
-			JsonNode n = iter.next();
-			String Q = n.get("question").textValue();
-			String A = n.get("answer").textValue();
+	public static BasicDBList hashQuestions(BasicDBList node) {
+		
+		Set<String> set = node.keySet();
+		for(String s: set) {
+			BasicDBObject obj = (BasicDBObject) node.get(s);	
+			
+			String Q = obj.getString("question");
+			String A = obj.getString("answer");
 			String hash = (Q + A).hashCode() + "";
 
-			ObjectNode obj = JsonNodeFactory.instance.objectNode();
-			obj.put("question", Q);
-			obj.put("answer", A);
 			obj.put("q_id", hash);
-			
-			a.add(obj);
+						
 		}
-		return o;
+	
+		return node;
 		
 	}
-
 }
