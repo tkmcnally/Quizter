@@ -144,7 +144,7 @@ public class Application extends Controller {
     	resultString = resultString.replace("]\"", "]");
     	resultString =  resultString.replace("\\\"", "\"");
     	StringBuilder rS = new StringBuilder(resultString);
-    	rS.delete(0, 1);	
+    	//rS.delete(0, 1);	
         
     	try {
     
