@@ -194,7 +194,7 @@ public class Application extends Controller {
 	    	ObjectNode result = Json.newObject();
 	    	result.put("id", user.get_id());
 	    	result.put("name", user.getName());
-	    	result.put("questions", questionsString);
+	    	result.put("questions", updatedUser.getQuestions().toString());
 	    	result.put("date_created", user.getDateCreated());
 	    	result.put("photo_url", facebookUser.getData().getUrl());
 	    	result.put("score", user.getScore());
