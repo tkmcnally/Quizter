@@ -268,7 +268,7 @@ public class Application extends Controller {
     	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
     	User user = new User();
     	user.mapFacebookUser(facebookUser);
-    	user = authentication(user);
+    	
     	
     	com.restfb.Connection<JsonObject> myFriends = facebookClient.fetchConnection("me/friends", JsonObject.class, Parameter.with("fields", "picture,name"));
     	
@@ -303,7 +303,6 @@ public class Application extends Controller {
 
 		if(db_users != null) {
 	    	List<User> users = (List<User>) makeCollection(db_users);
-	    	users.add(user);
 	    	Collections.sort(users, new ScoreComparator());
 	    	for(int i = 0; i < users.size(); i++) {
 	    		
