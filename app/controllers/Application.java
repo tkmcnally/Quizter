@@ -448,12 +448,20 @@ public class Application extends Controller {
 
     	String PLAYER_ID = requestJson.findPath("player_id").textValue();
     	
+    	String screen_density = requestJson.findPath("screen_density").textValue();
+
+    	
+    	
     	//Public facebook client accessor
     	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
     	
     	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
     	User current_user = new User();
     	current_user.mapFacebookUser(facebookUser);
+    	
+    	FacebookUser friend = facebookClient.fetchObject(facebookUser.getId() + "/picture", FacebookUser.class, 
+    			Parameter.with("width", Util.getPictureSize(screen_density)), Parameter.with("redirect", false), 
+    			Parameter.with("height", Util.getPictureSize(screen_density)), Parameter.with("type", "normal"));
   
     	JsonNode userQuestions = requestJson.findPath("question_answer");
     	
@@ -548,6 +556,7 @@ public class Application extends Controller {
 	    	}
 	    	result.put("score", score);
 	    	result.put("marked_questions", question_overview.toString());
+	    	result.put("photo_url", friend.getData().getUrl());
     	
 	    	
 	    	current_user.setScore(addScore(current_user, score));
