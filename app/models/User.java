@@ -32,6 +32,9 @@ public class User {
 		public void mapFacebookUser(FacebookUser facebookUser) {
 			this._id = facebookUser.id;
 			this.name = facebookUser.name;
+			if(facebookUser.getData() != null) {
+				this.picture_url = facebookUser.getData().getUrl();
+			}
 		}
 		
 		public String get_id() {
