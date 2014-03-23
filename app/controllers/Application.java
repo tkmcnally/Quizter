@@ -269,6 +269,13 @@ public class Application extends Controller {
     	User user = new User();
     	user.mapFacebookUser(facebookUser);
     	
+    	User current_user = null;
+    	try {
+			current_user = UserService.userAlreadyExists(user);
+		} catch (UnknownHostException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
     	
     	com.restfb.Connection<JsonObject> myFriends = facebookClient.fetchConnection("me/friends", JsonObject.class, Parameter.with("fields", "picture,name"));
     	
@@ -303,6 +310,7 @@ public class Application extends Controller {
 
 		if(db_users != null) {
 	    	List<User> users = (List<User>) makeCollection(db_users);
+	    	users.add(current_user);
 	    	Collections.sort(users, new ScoreComparator());
 	    	for(int i = 0; i < users.size(); i++) {
 	    		
@@ -311,8 +319,14 @@ public class Application extends Controller {
 	    		ObjectNode uNode = Json.newObject();
 	    		uNode.put("id", user.get_id());
 	    		uNode.put("rank", i + 1);
-	    		uNode.put("name", friends_as_users.get(temp_user.get_id()).get("name")); 	
-	    		uNode.put("photo_url", friends_as_users.get(temp_user.get_id()).get("photo"));
+	    	
+	    		if(friends_as_users.get(temp_user.get_id()) == null) {
+	    			uNode.put("name", users.get(i).getName());
+	    			uNode.put("photo_url", users.get(i).getPicture_url());
+	    		} else {
+	    			uNode.put("name", friends_as_users.get(temp_user.get_id()).get("name")); 	
+	    			uNode.put("photo_url", friends_as_users.get(temp_user.get_id()).get("photo"));
+	    		}
 	    		uNode.put("score", temp_user.getScore());
 	    		apps.add(uNode);
 	    	}
