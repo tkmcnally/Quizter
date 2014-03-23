@@ -459,7 +459,7 @@ public class Application extends Controller {
     	User current_user = new User();
     	current_user.mapFacebookUser(facebookUser);
     	
-    	FacebookUser friend = facebookClient.fetchObject(facebookUser.getId() + "/picture", FacebookUser.class, 
+    	FacebookUser friend = facebookClient.fetchObject(PLAYER_ID + "/picture", FacebookUser.class, 
     			Parameter.with("width", Util.getPictureSize(screen_density)), Parameter.with("redirect", false), 
     			Parameter.with("height", Util.getPictureSize(screen_density)), Parameter.with("type", "normal"));
   
