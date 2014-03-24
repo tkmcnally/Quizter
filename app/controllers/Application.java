@@ -265,7 +265,7 @@ public class Application extends Controller {
     	//Public facebook client accessor
     	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
     	
-    	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
+    	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class,  Parameter.with("fields", "picture,name"));
     	User user = new User();
     	user.mapFacebookUser(facebookUser);
     	
