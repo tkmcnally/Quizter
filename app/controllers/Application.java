@@ -265,13 +265,17 @@ public class Application extends Controller {
     	//Public facebook client accessor
     	FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
     	
-    	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class,  Parameter.with("fields", "picture,name"));
+    	FacebookUser facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
+    	facebookUser.combine(facebookClient.fetchObject(facebookUser.getId() + "/picture", FacebookUser.class, Parameter.with("redirect", false), Parameter.with("type", "normal")));
+    	System.out.println(facebookUser.getData().getUrl() + "URLLL");
     	User user = new User();
     	user.mapFacebookUser(facebookUser);
     	
     	User current_user = null;
     	try {
 			current_user = UserService.userAlreadyExists(user);
+			current_user.setPicture_url(user.getPicture_url());
+			
 		} catch (UnknownHostException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
