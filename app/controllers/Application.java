@@ -377,18 +377,20 @@ public class Application extends Controller {
 			e1.printStackTrace();
 		}
     	
-		
-    	FacebookUser user_with_picture = facebookClient.fetchObject(user_quizter_friend.get_id() + "/picture", FacebookUser.class, 
-    			Parameter.with("width", 400), Parameter.with("redirect", false), 
-    			Parameter.with("height", 400), Parameter.with("type", "normal"));
     	ObjectNode result = Json.newObject();
-    	result.put("available_players", "false");	
-    	if(user_quizter_friend != null) {
+    	if(user_quizter_friend != null) {		
+	    	FacebookUser user_with_picture = facebookClient.fetchObject(user_quizter_friend.get_id() + "/picture", FacebookUser.class, 
+	    			Parameter.with("width", 400), Parameter.with("redirect", false), 
+	    			Parameter.with("height", 400), Parameter.with("type", "normal"));
+	    	    	
     		result.put("id", user_quizter_friend.get_id());
         	result.put("name", user_quizter_friend.getName());
         	result.put("photo_url", user_with_picture.getData().getUrl());
         	result.put("available_players", "true");	
-     	}
+	     	
+    	} else { 
+    		result.put("available_players", "false");	
+    	}
 
 
     	Status status = null;
