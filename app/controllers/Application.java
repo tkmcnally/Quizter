@@ -317,12 +317,12 @@ public class Application extends Controller {
 	    		User temp_user = users.get(i);
 	    		
 	    		ObjectNode uNode = Json.newObject();
-	    		uNode.put("id", user.get_id());
+	    		uNode.put("id", temp_user.get_id());
 	    		uNode.put("rank", i + 1);
 	    	
 	    		if(friends_as_users.get(temp_user.get_id()) == null) {
-	    			uNode.put("name", users.get(i).getName());
-	    			uNode.put("photo_url", users.get(i).getPicture_url());
+	    			uNode.put("name", temp_user.getName());
+	    			uNode.put("photo_url", temp_user.getPicture_url());
 	    		} else {
 	    			uNode.put("name", friends_as_users.get(temp_user.get_id()).get("name")); 	
 	    			uNode.put("photo_url", friends_as_users.get(temp_user.get_id()).get("photo"));

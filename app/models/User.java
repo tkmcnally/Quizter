@@ -30,8 +30,8 @@ public class User {
 		private String score;
 
 		public void mapFacebookUser(FacebookUser facebookUser) {
-			this._id = facebookUser.id;
-			this.name = facebookUser.name;
+			this._id = facebookUser.getId();
+			this.name = facebookUser.getName();
 			if(facebookUser.getData() != null) {
 				this.picture_url = facebookUser.getData().getUrl();
 			}
