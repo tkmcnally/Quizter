@@ -105,7 +105,10 @@ public class Application extends Controller {
 	    	result.put("date_created", user.getDateCreated());
 	    	result.put("photo_url", facebookUser.getData().getUrl());
 	    	result.put("score", user.getScore());
-	    	
+			
+			boolean hasSetupProfile = Util.hasSetupProfile(user);
+		 	result.put("setup_profile", hasSetupProfile);
+			 	
 	    	status = ok(result);
     	} else {
     		status = unauthorized();
@@ -433,15 +436,12 @@ public class Application extends Controller {
 			qa.remove("answer");
 			filtered_questions.add(qa);
 		}
-		
-		boolean hasSetupProfile = Util.hasSetupProfile(PLAYER);
 
-		
 		//Construct JSON to return
     	ObjectNode result = Json.newObject();
     	result.put("questions", filtered_questions.toString());
     	result.put("player_id", PLAYER_ID);
-    	result.put("setup_profile", hasSetupProfile);
+   
     
 
     	Status status = null;
