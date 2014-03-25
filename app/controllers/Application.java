@@ -202,6 +202,9 @@ public class Application extends Controller {
 	    	result.put("photo_url", facebookUser.getData().getUrl());
 	    	result.put("score", user.getScore());
 	    	
+	    	boolean hasSetupProfile = Util.hasSetupProfile(user);
+		 	result.put("setup_profile", hasSetupProfile);
+	    	
 	    	status = ok(result);
     	} else {
     		status = unauthorized();
