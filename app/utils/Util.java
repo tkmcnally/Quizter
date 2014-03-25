@@ -1,6 +1,7 @@
 package utils;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,6 +10,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+
+import models.User;
 
 /**
  * Utility class for common operations.
@@ -63,5 +66,17 @@ public class Util {
 	
 		return node;
 		
+	}
+	
+	public static boolean hasSetupProfile(User user) {
+		boolean hasSetup = true;
+		for(Object obj: user.getQuestions()) {
+			LinkedHashMap qa = (LinkedHashMap) obj;
+			if(Constants.DEFAULT_QUESTION.equals(qa.get("question"))) {
+				return false;
+			}
+		}
+		
+		return hasSetup;
 	}
 }
