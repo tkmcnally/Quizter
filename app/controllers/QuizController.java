@@ -44,7 +44,7 @@ public class QuizController extends Controller {
         String ACCESS_TOKEN = requestJson.findPath("ACCESS_TOKEN").textValue();
         String PLAYER_ID = requestJson.findPath("player_id").textValue();
         String screen_density = requestJson.findPath("screen_density").textValue();
-        JsonNode userQuestions = requestJson.findPath("question_answer");
+        JsonNode userQuestions =  Json.parse(requestJson.findPath("question_answer").asText());
 
         if (ACCESS_TOKEN == null || PLAYER_ID == null || screen_density == null || userQuestions == null || userQuestions.size() == 0) {
             return badRequest("Bad JSON: Invalid parameters.");
