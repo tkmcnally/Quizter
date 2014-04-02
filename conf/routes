@@ -3,29 +3,30 @@
 # ~~~~
 
 # Splash page for application
-GET     /                           controllers.WebController.index()
+GET     /                                       controllers.WebController.index()
 
-# API Route to login/register user
-POST	/api/android/get-profile	    controllers.ProfileController.getProfile()
+# API Route to retrieve a user's profile
+POST	/api/android/get-profile	            controllers.ProfileController.getProfile()
 
-# API Route for loading a list of questions
-POST	/api/android/facebook/loadquestions	    controllers.ProfileController.loadQuestions()
+# API Route for retrieving default questions
+POST	/api/android/get-default-questions      controllers.ProfileController.loadQuestions()
 
-# API Route to update user's questions
-POST	/api/android/facebook/questions	    controllers.ProfileController.updateQuestions()
+# API Route to update user's profile
+POST	/api/android/update-profile	            controllers.ProfileController.updateQuestions()
 
 # API Route for retrieving a user's leaderboard
-POST	/api/android/facebook/leaderboard	controllers.LeaderboardController.loadLeaderboard()
+POST	/api/android/get-leaderboard	        controllers.LeaderboardController.loadLeaderboard()
 
-#
-POST	/api/android/facebook/fetchplayer	controllers.QuizController.fetchPlayer()
+# API Route to retrieve an available player to quiz
+POST	/api/android/get-available-player	    controllers.QuizController.fetchPlayer()
 
-#asda
-POST  /api/android/facebook/getplayersquestions controllers.QuizController.getQuestionsForQuiz()
+# API Route to retrieve a player's profile
+POST    /api/android/get-player-profile         controllers.QuizController.getQuestionsForQuiz()
 
-POST /api/android/facebook/submitquiz controllers.QuizController.submitQuiz()
+# API Route to submit a completed quiz
+POST    /api/android/submit-quiz                controllers.QuizController.submitQuiz()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file                           controllers.Assets.at(path="/public", file)
 
 
