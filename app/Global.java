@@ -18,7 +18,13 @@ public class Global extends GlobalSettings {
 
     public Promise<SimpleResult> onError(RequestHeader request, Throwable t) {
         return Promise.<SimpleResult>pure(internalServerError(
-        		views.html.oauth.render("Unexpected Error. Sorry!")
+        		views.html.blank.render("Unexpected Error. Sorry!")
+        ));
+    }
+
+    public Promise<SimpleResult> onHandlerNotFound(RequestHeader request) {
+        return Promise.<SimpleResult>pure(notFound(
+                views.html.blank.render("Action not found!")
         ));
     }
 
