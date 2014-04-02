@@ -2,7 +2,7 @@ COMP4905 - Honor's Project
 ========
 
   <p align="center">
-    <img src="http://imgur.com/U8VEcmb" width="128" height="128"/>
+    <img src="http://i.imgur.com/U8VEcmb.png" width="256" height="256"/>
   </p>
 
 
@@ -13,7 +13,7 @@ Quizter is a quiz-based social networking application for mobile devices. Users 
 ### What components are involved?
 
 
-This project contains *four* major components: 
+This project contains *four* major components:
 
   <ul>
     <li>Client: [Android OS](http://developer.android.com/index.html)</li>
@@ -27,18 +27,18 @@ This project contains *four* major components:
         <li>Hosted on [MongoHQ](http://www.mongohq.com/)</li>
       </ul>
   </ul>
-  
+
 
 
   <p align="center">
     <img src="http://i.imgur.com/BcsTZ0F.png" />
   </p>
-  
+
   <p align="center">
     <b>Figure 1</b> - System level overview
   </p>
 
 ### Status:
 
->In Development 
+>In Development
 =======
