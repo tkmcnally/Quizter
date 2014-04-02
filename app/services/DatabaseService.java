@@ -46,7 +46,6 @@ public class DatabaseService {
         String dbURI = Play.application().configuration().getString("heroku.db.uri");
 
         MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://" + username + ":" + password + "@" + dbURI + "/" + dbID));
-       // MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://" + username + ":" + password + "@paulo.mongohq.com:10051/" + Constants.DB_NAME));
         DB db = mongoClient.getDB(dbID);
         Jongo jongo = new Jongo(db);
         MongoCollection mongoCollection = jongo.getCollection(collectionName);
