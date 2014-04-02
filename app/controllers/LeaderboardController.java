@@ -15,8 +15,8 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 import services.DatabaseService;
-import utils.ScoreComparator;
 import utils.Util;
+import utils.comparators.ScoreComparator;
 
 import java.net.UnknownHostException;
 import java.util.Collections;
