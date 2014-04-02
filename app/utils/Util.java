@@ -70,7 +70,7 @@ public class Util {
         boolean hasSetup = true;
         for (Object obj : user.getQuestions()) {
             LinkedHashMap qa = (LinkedHashMap) obj;
-            String default_question = Play.application().configuration().getString("default_question");
+            String default_question = Play.application().configuration().getString("quizter.question.default");
             if (default_question.equals(qa.get("question"))) {
                 return false;
             }
