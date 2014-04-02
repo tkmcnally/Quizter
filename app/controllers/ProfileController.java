@@ -113,8 +113,9 @@ public class ProfileController extends Controller {
         //Retrieve expected attributes from JSON.
         String access_token = requestJson.findPath("ACCESS_TOKEN").textValue();
         String screen_density = requestJson.findPath("screen_density").textValue();
-        JsonNode userQuestions = requestJson.findPath("updated_questions");
+        JsonNode userQuestions = Json.parse(requestJson.findPath("updated_questions").asText());
         if (access_token == null || screen_density == null || userQuestions == null || userQuestions.size() == 0) {
+
             return badRequest("Bad JSON: Invalid parameters.");
         }
 
