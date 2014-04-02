@@ -1,6 +1,11 @@
 COMP4905 - Honor's Project
 ========
 
+  <p align="center">
+    <img src="http://imgur.com/U8VEcmb" width="128" height="128"/>
+  </p>
+
+
 ### What is Quizter?
 
 Quizter is a quiz-based social networking application for mobile devices. Users create a profile and choose from a set pool of questions designed to present other uses the chance to test their knowledge about you. Users will not only get the chance to get familiar with their friend’s interests and personality, they can also compete against each other. A competitive component is utilized by giving the user the chance to gain points for every question they get correct.  A total accumulation of these points, or more specifically a formulated ranking system that represents their total ‘friend’ level, is assigned to each user and updated as they play.
