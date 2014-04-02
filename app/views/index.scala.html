@@ -1,36 +1,60 @@
-@(info: List[String])
-
 <!DOCTYPE html>
 
+<head>
+    <link href="http://fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,400,400italic" rel="stylesheet" type="text/css" />
+    <link href="@routes.Assets.at("stylesheets/home.css")" rel="stylesheet" type="text/css" />
+    <title>Quizter</title>
+    <link rel="icon" type="image/ico" href="@routes.Assets.at("images/favicon.png")"/>
+</head>
+
 <html>
-    <head>
-        <title>Quizter</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
-    </head>
     <body>
-   		<div id="background">
-	    	<div id="overlay-body">
-	    
-	    	</div>
-	    	<div id="title1">
-	    		<p>Quizter</p>
-	    	</div>
-	    	<div id="title2">
-	    		<p>A Social Networking Application</p>
-	    		<p>Coming Soon</p>
-	    	</div>
-	    	<div id="content-slot-2" class="effect">
-		  
-			</div>
-		    <div id="content-slot-1">
-		   		<div class="image-holder">
-					<!-- <img src="@routes.Assets.at("images/nexus5.png")"> -->
-				</div>
-		    </div>
-		   
-    	 </div>
-    	
+
+        <div class="top-wrapper">
+
+            <div class="top-container">
+                <div class="img-container">
+                    <div class="img-phone"></div>
+                </div>
+                <div class="top-container-middle">
+                    <div class="quizter-logo"></div>
+                    <h1> Quizter </h1>
+                    <h2>An Android social-network based trivia game.</h2>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="middle-wrapper">
+            <div class="middle-container">
+                <h2>Learn more about your friends' interests and personalities as you complete their quizzes!</h2>
+                <div class="middle-container-section-1">
+                    <div class="ss-phone-1"></div>
+                    <div class="right-arrow"></div>
+
+                    <div class="ss-phone-2"></div>
+                    <div class="right-arrow"></div>
+
+                    <div class="ss-phone-3"></div>
+                </div>
+                <div class="middle-container-section-2">
+                    <div class="left-container">
+                        <h2>Create you're own questions/answers to make your quiz more personable!</h2>
+                        <div class="ss-phone-4"></div>
+                    </div>
+                    <div class="right-container">
+                        <h2>Leaderboards track you and your friends' progress<br>&nbsp</h2>
+                        <div class="ss-phone-5"></div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="bottom-wrapper">
+            <div class="bottom-container">
+                <a href="http://www.tkmcnally.com">About Me</a>
+            </div>
+        </div>
     </body>
 </html>

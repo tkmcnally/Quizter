@@ -8,11 +8,11 @@ import org.jongo.marshall.jackson.oid.ObjectId;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 /**
- * Data Model representing a Quizter User.
+ * Data Model representing a Quizter QuizterUser.
  * @author Thomas McNally
  *
  */
-public class User {
+public class QuizterUser {
 	
 		@Id
 		private String _id;

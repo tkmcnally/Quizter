@@ -5,7 +5,7 @@ import com.restfb.Facebook;
 public class FacebookData {
 
 	/**
-	 * Data Model representing a Facebook User's data.
+	 * Data Model representing a Facebook QuizterUser's data.
 	 * @author Thomas McNally
 	 *
 	 */

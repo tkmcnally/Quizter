@@ -5,7 +5,7 @@ import com.restfb.types.Photo;
 
 
 /**
- * Data Model representing a Facebook User.
+ * Data Model representing a Facebook QuizterUser.
  * @author Thomas McNally
  *
  */

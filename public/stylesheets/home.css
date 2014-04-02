@@ -1,0 +1,232 @@
+html {
+	background-color: #ecf0f1; 
+}
+
+body,input,textarea,select {
+	font-family: 'Roboto', sans-serif;
+	font-weight: 300;
+	font-size: 17pt;
+	line-height: 1.75em;
+	color: #888;
+	-webkit-text-stroke: 0.1px;
+	margin: 0;
+}
+
+h1 {
+	color: #ecf0f1;
+	margin: 0 0 1em 0;
+	font-weight: 100;
+	line-height: 1.5em;
+	font-weight: 900;
+	font-family: 'Roboto', sans-serif;
+}
+
+h2 {
+	color: #ecf0f1;
+	margin: 0 0 1em 0;
+	line-height: 1.5em;
+	font-weight: 300;
+	font-family: 'Roboto', sans-serif;
+}
+
+p {
+	color: #666;
+	margin: 0 0 1em 0;
+	line-height: 1.25em;
+	font-weight: 100;
+	font-family: 'Roboto', sans-serif;
+}
+
+
+.top-wrapper {
+	padding-top: 3%;
+	width: 100%;
+	background-color: #2ecc71; 
+}
+
+.top-wrapper .top-container {
+	width: 900px;
+	height: 500px;
+	/*background-color: #112312;*/
+	margin-right: auto;
+	margin-left: auto;
+	position: relative;
+	color: #ecf0f1;
+	text-align: center;
+	display: block;
+}
+
+.top-wrapper .top-container .top-container-middle {
+	width: 500px;
+	height: 500px;
+	/*background-color: #000000;*/
+	position: relative;
+	color: #ecf0f1;
+	text-align: center;
+}
+.top-wrapper .top-container .top-container-middle .quizter-logo {
+	width: 200px;
+	height: 200px;
+	background: url('../images/quizter_logo.png') no-repeat;
+	background-size: 200px 200px;
+	margin: auto;
+
+}
+.top-wrapper .top-container .img-container {
+	width: auto;
+	float: right;
+	/*background-color: #FFFFFF;*/
+	position: relative;
+}
+.top-wrapper .top-container .img-container .img-phone {
+	width: 377px;
+	height: 700px;
+	background: url('../images/phone.png') no-repeat;
+	background-size: 377px 700px;
+	display: block;
+	position: relative;
+	z-index: 10;
+}
+
+.middle-wrapper {
+	width: 100%;
+	padding-top: 3%;
+	background-color: #ecf0f1; 
+	-webkit-box-shadow: 0px -1px 3px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow:    0px -1px 3px rgba(50, 50, 50, 0.75);
+    box-shadow:         0px -1px 3px rgba(50, 50, 50, 0.75);
+}
+
+
+.middle-wrapper h2 {
+	color: #7f8c8d;
+	margin: 0 0 1em 0;
+	line-height: 1.5em;
+	font-weight: 300;
+	font-family: 'Roboto', sans-serif;
+}
+
+.middle-wrapper .middle-container {
+	width: 1000px;
+	height: 1200px;
+	/*background-color: #000000;*/
+	margin-right: auto;
+	margin-left: auto;
+	position: relative;
+	color: #FFFFFF;
+	text-align: center;
+}
+
+.middle-wrapper .middle-container .middle-container-section-1 {
+	position: relative;
+	/*background-color: teal;*/
+	margin: auto;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.middle-wrapper .middle-container .middle-container-section-1 .right-arrow {
+	width: 64px;
+	height: 64px;
+	background: url('../images/right_arrow.png') no-repeat;
+	background-size: 64px 64px;
+  	display: inline-block;
+  	float: left;
+ 	margin-top: 155px;
+}
+
+.middle-wrapper .middle-container .middle-container-section-1  .ss-phone-1 {
+	width: 215px;
+	height: 400px;
+	background: url('../images/quiz_selection.png') no-repeat;
+	background-size: 215px 400px;
+	float: left;
+}
+
+.middle-wrapper .middle-container .middle-container-section-1 .ss-phone-2 {
+	width: 215px;
+	height: 400px;
+	background: url('../images/quiz_phone.png') no-repeat;
+	background-size: 215px 400px;
+	float: left;
+	
+	display: block;
+}
+
+.middle-wrapper .middle-container .middle-container-section-1  .ss-phone-3 {
+	width: 215px;
+	height: 400px;
+	background: url('../images/score_review.png') no-repeat;
+	background-size: 215px 400px;
+	float: left;
+
+}
+
+
+.middle-wrapper .middle-container .middle-container-section-2 {
+	padding-top: 20px;
+	height: 500px;
+}
+
+.middle-wrapper .middle-container .middle-container-section-2 .left-container{
+	width: 50%;
+	height: 500px;
+	float: left;
+}
+
+.middle-wrapper .middle-container .middle-container-section-2 .right-container{
+	width: 50%;
+	height: 500px;
+	float: left;
+}
+
+
+.middle-wrapper .middle-container .middle-container-section-2  .left-container .ss-phone-4 {
+	width: 215px;
+	height: 400px;
+	background: url('../images/question_modify.png') no-repeat;
+	background-size: 215px 400px;
+	margin: auto;
+
+}
+
+.middle-wrapper .middle-container .middle-container-section-2  .right-container .ss-phone-5 {
+	width: 215px;
+	height: 400px;
+	background: url('../images/leaderboard_phone.png') no-repeat;
+	background-size: 215px 400px;
+	margin: auto;
+}
+
+
+.bottom-wrapper {
+	width: 100%;
+
+	background-color: #bdc3c7;
+	-webkit-box-shadow: 0px -1px 3px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow:    0px -1px 3px rgba(50, 50, 50, 0.75);
+    box-shadow:         0px -1px 3px rgba(50, 50, 50, 0.75);
+    overflow: hidden;
+}
+
+.bottom-container a {
+	text-decoration: none;
+	color: #7f8c8d;
+	margin: 0 0 1em 0;
+	line-height: 1.0em;
+	font-weight: 300;
+	font-family: 'Roboto', sans-serif;
+}
+
+.bottom-wrapper .bottom-container {
+	width: 500px;
+	height: 50px;
+	position: relative;
+	/*background-color: #000000;*/
+	margin-right: auto;
+	margin-left: auto;
+	position: relative;
+	color: #FFFFFF;
+	text-align: center;
+	overflow: hidden;
+}

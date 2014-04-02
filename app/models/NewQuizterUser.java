@@ -1,22 +1,18 @@
 package models;
 
-import java.util.ArrayList;
-
-import org.jongo.marshall.jackson.oid.ObjectId;
-
 import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
+
 /**
- * Data Model representing a Quizter User.
+ * Data Model representing a Quizter QuizterUser.
  * @author Thomas McNally
  *
  */
-public class NewUser extends User {
+public class NewQuizterUser extends QuizterUser {
 	
 	
 	private BasicDBList questionsAnswered;
 	
-	public NewUser() {
+	public NewQuizterUser() {
 		this.questionsAnswered = new BasicDBList();
 	}
 
@@ -28,7 +24,7 @@ public class NewUser extends User {
 		this.questionsAnswered = questionsAnswered;
 	}
 	
-	public NewUser mapUser(User user) {
+	public NewQuizterUser mapUser(QuizterUser user) {
 		this.setName(user.getName());
 		this.set_id(user.get_id());
 		return this;

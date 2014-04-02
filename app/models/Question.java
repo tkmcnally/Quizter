@@ -1,7 +1,7 @@
 package models;
 
 /**
- * Data Model representing a Question of a Quizter User.
+ * Data Model representing a Question of a Quizter QuizterUser.
  * @author Thomas McNally
  *
  */

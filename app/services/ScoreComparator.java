@@ -3,11 +3,11 @@ package services;
 import java.util.Comparator;
 import java.lang.Integer;
 
-import models.User;
+import models.QuizterUser;
 
-public class ScoreComparator implements Comparator<User> {
+public class ScoreComparator implements Comparator<QuizterUser> {
     @Override
-    public int compare(User a, User b) {
+    public int compare(QuizterUser a, QuizterUser b) {
     	Integer id1 = Integer.parseInt(a.getScore());
 	    Integer id2 = Integer.parseInt(b.getScore());
 

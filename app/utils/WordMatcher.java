@@ -42,7 +42,7 @@ public class WordMatcher {
     }
  
     public static void main(String [] args) {
-        String [] data = { "kitten", "", "saturday", "sunday", "rosettacode", "raisethysword" };
+        String [] data = { "stallions", "stallion", "stalliond", "sunday", "rosettacode", "raisethysword" };
         for (int i = 0; i < data.length; i += 2)
             System.out.println("distance(" + data[i] + ", " + data[i+1] + ") = " + distance(data[i], data[i+1]));
     }

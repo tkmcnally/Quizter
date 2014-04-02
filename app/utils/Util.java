@@ -1,17 +1,11 @@
 package utils;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Set;
+import java.util.*;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
-import models.User;
+import models.QuizterUser;
 
 /**
  * Utility class for common operations.
@@ -22,7 +16,7 @@ public class Util {
 	
 	
 	/**
-	 * Data Model representing a Facebook User.
+	 * Data Model representing a Facebook QuizterUser.
 	 * @param density - Double representing the screen density of the Android phone.
 	 * @return pixel_size - The appropriate pixel size to be used to display the 
 	 * profile picture on that density.
@@ -68,7 +62,7 @@ public class Util {
 		
 	}
 	
-	public static boolean hasSetupProfile(User user) {
+	public static boolean hasSetupProfile(QuizterUser user) {
 		boolean hasSetup = true;
 		for(Object obj: user.getQuestions()) {
 			LinkedHashMap qa = (LinkedHashMap) obj;
@@ -79,4 +73,13 @@ public class Util {
 		
 		return hasSetup;
 	}
+
+
+    public static <E> Collection<E> makeCollection(Iterable<E> iter) {
+        Collection<E> list = new ArrayList<E>();
+        for (E item : iter) {
+            list.add(item);
+        }
+        return list;
+    }
 }
