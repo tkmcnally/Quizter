@@ -14,9 +14,8 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import play.mvc.Results;
-import services.ScoreComparator;
-import services.UserService;
+import services.DatabaseService;
+import utils.ScoreComparator;
 import utils.Util;
 
 import java.net.UnknownHostException;
@@ -31,6 +30,7 @@ public class LeaderboardController extends Controller {
 
     /**
      * Returns JSON with list of users in descending order with respect to User's score.
+     *
      * @return a leaderboard for the user
      */
     @BodyParser.Of(BodyParser.Json.class)
@@ -62,14 +62,14 @@ public class LeaderboardController extends Controller {
         //Combine FacebookUser model with another query.
         facebookUser.combine(facebookClient.fetchObject(facebookUser.getId() + "/picture", FacebookUser.class, Parameter.with("redirect", false), Parameter.with("type", "normal")));
 
-        //Create Quziter UserModels.
+        //Create QuziterUser Models.
         QuizterUser quizter_user = null;
         QuizterUser temp_fb_user = new QuizterUser();
         temp_fb_user.mapFacebookUser(facebookUser);
 
         //Retrieve user from database, and set photo url from previously created FacebookUser model.
         try {
-            quizter_user = UserService.userAlreadyExists(temp_fb_user);
+            quizter_user = DatabaseService.userAlreadyExists(temp_fb_user);
             quizter_user.setPicture_url(temp_fb_user.getPicture_url());
         } catch (UnknownHostException e2) {
             return internalServerError("Database Connection Error: Could not connect to database.");
@@ -97,7 +97,7 @@ public class LeaderboardController extends Controller {
         //Retrieve list of Facebook Users that have a Quizter account.
         Iterable<QuizterUser> db_users = null;
         try {
-            db_users = UserService.getFriendsOfPlayer(myFriends.getData());
+            db_users = DatabaseService.getFriendsOfPlayer(myFriends.getData());
         } catch (UnknownHostException e1) {
             return internalServerError("Database Connection Error: Could not connect to database.");
         }
@@ -124,6 +124,7 @@ public class LeaderboardController extends Controller {
                 uNode.put("id", temp_user.get_id());
                 uNode.put("rank", i + 1);
 
+                // Retrieve photo and name from previous list of friends if not adding current user
                 if (friends_as_users.get(temp_user.get_id()) == null) {
                     uNode.put("name", temp_user.getName());
                     uNode.put("photo_url", temp_user.getPicture_url());

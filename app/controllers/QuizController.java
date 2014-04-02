@@ -17,7 +17,7 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
-import services.UserService;
+import services.DatabaseService;
 import utils.Util;
 import utils.WordMatcher;
 
@@ -93,8 +93,8 @@ public class QuizController extends Controller {
 
         QuizterUser quiz_player = null;
         try {
-            quiz_player = UserService.userAlreadyExists(tempUser);
-            current_user = UserService.userAlreadyExists(current_user);
+            quiz_player = DatabaseService.userAlreadyExists(tempUser);
+            current_user = DatabaseService.userAlreadyExists(current_user);
         } catch (UnknownHostException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -120,7 +120,7 @@ public class QuizController extends Controller {
         //GET ANSWERED QUESTIONS
         UserAnsweredQuestions questionsAnswered = null;
         try {
-            questionsAnswered = UserService.getQuestionsAnswered(current_user);
+            questionsAnswered = DatabaseService.getQuestionsAnswered(current_user);
         } catch (UnknownHostException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -166,14 +166,14 @@ public class QuizController extends Controller {
 
             //UPDATE USERS SCORE
             try {
-                UserService.updateScore(current_user);
+                DatabaseService.updateScore(current_user);
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
 
             //UPDATE USERS ANSWERED QUESTIONS
             try {
-                UserService.updateAnswersQuestions(questionsAnswered);
+                DatabaseService.updateAnswersQuestions(questionsAnswered);
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
@@ -224,7 +224,7 @@ public class QuizController extends Controller {
         //Retrieve QuizterUser from database
         QuizterUser PLAYER = null;
         try {
-            PLAYER = UserService.userAlreadyExists(tempUser);
+            PLAYER = DatabaseService.userAlreadyExists(tempUser);
         } catch (UnknownHostException e1) {
             e1.printStackTrace();
         }
@@ -291,7 +291,7 @@ public class QuizController extends Controller {
         //Query DB for friends with ID
         QuizterUser user_quizter_friend = null;
         try {
-            user_quizter_friend = UserService.getPlayerForFriend(friends_list, int_player_index);
+            user_quizter_friend = DatabaseService.getPlayerForFriend(friends_list, int_player_index);
         } catch (UnknownHostException e1) {
             e1.printStackTrace();
         }

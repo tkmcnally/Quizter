@@ -14,6 +14,7 @@ import models.QuizterUser;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 
+import play.Play;
 import utils.Constants;
 
 import com.mongodb.BasicDBList;
@@ -25,22 +26,28 @@ import com.restfb.json.JsonObject;
 
 
 /**
- * UserService --- class to handle all database operations.
+ * DatabaseService --- class to handle all database operations.
  * @author Thomas McNally
  */
-public class UserService {
+public class DatabaseService {
 
 
     /**
      * Returns a Collection connection to a Database.
-     * @param dbName - Name of Database to connect.
      * @param collectionName - Name of Collection to connect.
      * @return mongoCollection - A MongoCollection established using Jongo.
      * @throws UnknownHostException - If connection cannot be established to database.
      */
-    public static MongoCollection getConnection(String dbName, String collectionName) throws UnknownHostException {
-        MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://tkmcnally:t5725555@paulo.mongohq.com:10051/" + Constants.DB_NAME));
-        DB db = mongoClient.getDB(dbName);
+    public static MongoCollection getConnection(String collectionName) throws UnknownHostException {
+
+        String username = Play.application().configuration().getString("heroku.db.username");
+        String password = Play.application().configuration().getString("heroku.db.password");
+        String dbID = Play.application().configuration().getString("heroku.db.id");
+        String dbURI = Play.application().configuration().getString("heroku.db.uri");
+
+        MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://" + username + ":" + password + "@" + dbURI + "/" + dbID));
+       // MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://" + username + ":" + password + "@paulo.mongohq.com:10051/" + Constants.DB_NAME));
+        DB db = mongoClient.getDB(dbID);
         Jongo jongo = new Jongo(db);
         MongoCollection mongoCollection = jongo.getCollection(collectionName);
 
@@ -54,7 +61,7 @@ public class UserService {
      * @throws UnknownHostException - If connection cannot be established to database.
      */
     public static QuizterUser userAlreadyExists(QuizterUser user) throws UnknownHostException {
-        MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+        MongoCollection mongoCollection = getConnection("users");
         QuizterUser reqUser = mongoCollection.findOne("{_id: '" + user.get_id() +"'}").as(QuizterUser.class);
 
         return reqUser;
@@ -85,7 +92,7 @@ public class UserService {
 
         user.setQuestions(newList);
 
-        MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+        MongoCollection mongoCollection = getConnection("users");
         mongoCollection.insert(newUser);
 
         mongoCollection.update("{_id: '" + user.get_id() + "'}").with("{$set: {questionsAnswered: [] }}");
@@ -101,7 +108,7 @@ public class UserService {
      * @throws UnknownHostException - If connection cannot be established to database.
      */
     public static QuizterUser updateQuestions(QuizterUser user) throws UnknownHostException {
-        MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+        MongoCollection mongoCollection = getConnection("users");
         mongoCollection.update("{_id: '" + user.get_id() + "'}").with("{$set: {questions: " + user.getQuestions() + "}}");
 
         QuizterUser reqUser = mongoCollection.findOne("{_id: '" + user.get_id() +"'}").as(QuizterUser.class);
@@ -116,14 +123,14 @@ public class UserService {
      * @throws UnknownHostException - If connection cannot be established to database.
      */
     public static Iterable<Question> loadQuestionsFromIndex(int index) throws UnknownHostException {
-        MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "questions");
+        MongoCollection mongoCollection = getConnection("questions");
 
         Iterable<Question> questionList = mongoCollection.find("{_id: {$gt: " + (index - 10) + ", $lte: " + index + "}}").as(Question.class);
         return questionList;
     }
 
     public static void updateScore(QuizterUser user) throws UnknownHostException {
-        MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+        MongoCollection mongoCollection = getConnection("users");
         mongoCollection.update("{_id: '" + user.get_id() + "'}").with("{$set: {score: " + user.getScore() + "}}");
     }
 
@@ -134,7 +141,7 @@ public class UserService {
      * @throws UnknownHostException - If connection cannot be established to database.
      */
     public static QuizterUser getPlayerForFriend(List<JsonObject> players, int index) throws UnknownHostException {
-        MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+        MongoCollection mongoCollection = getConnection("users");
         int current_player = 0;
         QuizterUser user = null;
         QuizterUser tempUser = null;
@@ -162,7 +169,7 @@ public class UserService {
     }
 
     public static Iterable<QuizterUser> getFriendsOfPlayer(List<JsonObject> players) throws UnknownHostException {
-        MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+        MongoCollection mongoCollection = getConnection("users");
         int current_player = 0;
         QuizterUser user = null;
         QuizterUser tempUser = null;
@@ -180,7 +187,7 @@ public class UserService {
 
 
     public static UserAnsweredQuestions getQuestionsAnswered(QuizterUser user) throws UnknownHostException {
-        MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+        MongoCollection mongoCollection = getConnection("users");
 
         UserAnsweredQuestions userAnsweredQuestions = mongoCollection.findOne("{_id: '" + user.get_id() +"'}").as(UserAnsweredQuestions.class);
         return userAnsweredQuestions;
@@ -188,7 +195,7 @@ public class UserService {
     }
 
     public static void updateAnswersQuestions(UserAnsweredQuestions userAnsweredQuestion) throws UnknownHostException {
-        MongoCollection mongoCollection = getConnection(Constants.DB_NAME, "users");
+        MongoCollection mongoCollection = getConnection("users");
         mongoCollection.update("{_id: '" + userAnsweredQuestion.get_id() + "'}").with("{$set: {questionsAnswered: " + userAnsweredQuestion.getQuestionsAnswered() + "}}");
     }
 }

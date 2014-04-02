@@ -15,11 +15,9 @@ import play.libs.Json;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
-import play.mvc.Results;
-import services.UserService;
+import services.DatabaseService;
 import utils.Util;
 
-import java.io.PrintStream;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,26 +27,32 @@ import java.util.Iterator;
  */
 public class ProfileController extends Controller {
 
+
+    /**
+     * Retrieving information used to load the profile page.
+     *
+     * @return JSON with relevant profile information.
+     */
     @BodyParser.Of(BodyParser.Json.class)
     public static Result getProfile() {
 
-        Results.Status status = null;
+        //Returned HTTP status code.
+        Status status = null;
 
-        //JSON object from request.
+        //Parse JSON into JsonNode from incoming HTTP request.
         JsonNode requestJson = request().body().asJson();
 
-
+        //Retrieve expected attributes from JSON.
         String access_token = requestJson.findPath("ACCESS_TOKEN").textValue();
         String screen_density = requestJson.findPath("screen_density").textValue();
-
         if (access_token == null || screen_density == null) {
             return badRequest("Bad JSON: Invalid parameters.");
         }
 
-        //Public facebook client accessor
+        //Create Facebook API accessor with user token.
         FacebookClient facebookClient = new DefaultFacebookClient(access_token);
 
-
+        //Retrieve QuizterUser's facebook profile information.
         FacebookUser facebookUser = null;
         try {
             //Create mock FacebookUser object with info from Facebook.
@@ -60,9 +64,15 @@ public class ProfileController extends Controller {
             return unauthorized("OAuth Exception: Invalid authentication token.");
         }
 
+        //Create QuziterUser Models.
         QuizterUser tempUser = new QuizterUser();
         tempUser.mapFacebookUser(facebookUser);
-        QuizterUser user = authentication(tempUser);
+        QuizterUser user = null;
+        try {
+            user = authentication(tempUser);
+        } catch (UnknownHostException e) {
+            return internalServerError("Database Connection Error: Could not connect to database.");
+        }
 
         if (user != null) {
             //Return JSON.
@@ -74,10 +84,10 @@ public class ProfileController extends Controller {
             result.put("photo_url", facebookUser.getData().getUrl());
             result.put("score", user.getScore());
 
+            // Determine if User has setup their 5 questions.
             boolean hasSetupProfile = Util.hasSetupProfile(user);
             result.put("setup_profile", hasSetupProfile);
 
-            System.out.println("still working");
             status = ok(result);
         } else {
             status = unauthorized();
@@ -85,36 +95,46 @@ public class ProfileController extends Controller {
         return status;
     }
 
+    /**
+     * Update a users profile.
+     *
+     * @return the newly updated user's information as a confirmation.
+     */
     @BodyParser.Of(BodyParser.Json.class)
-    public static Result updateQuestions() {
+    public static Result updateProfile() {
 
-        String questionsString = null;
+        //Returned HTTP status code.
+        Status status = null;
 
-        //JSON object from request.
+        //Parse JSON into JsonNode from incoming HTTP request.
         JsonNode requestJson = request().body().asJson();
 
-        //Check for un/pw
+
+        //Retrieve expected attributes from JSON.
         String access_token = requestJson.findPath("ACCESS_TOKEN").textValue();
         String screen_density = requestJson.findPath("screen_density").textValue();
         JsonNode userQuestions = requestJson.findPath("updated_questions");
-
-
         if (access_token == null || screen_density == null || userQuestions == null || userQuestions.size() == 0) {
             return badRequest("Bad JSON: Invalid parameters.");
         }
 
-        //Public facebook client accessor
+        //Create Facebook API accessor with user token.
         FacebookClient facebookClient = new DefaultFacebookClient(access_token);
 
+        //Retrieve QuizterUser's facebook profile information.
         FacebookUser facebookUser = null;
         try {
             facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
         } catch (FacebookOAuthException e) {
             return unauthorized("OAuth Exception: Invalid authentication token.");
         }
+
+        //Create QuziterUser model.
         QuizterUser updatedUser = new QuizterUser();
         updatedUser.mapFacebookUser(facebookUser);
 
+
+        // Filter stale escape characters from JSON.
         String resultString = userQuestions.toString();
         resultString = resultString.replace(":\"[", ": [");
         resultString = resultString.replace("]\"", "]");
@@ -124,40 +144,40 @@ public class ProfileController extends Controller {
             rS.delete(0, 1);
         }
 
+        // Construct new question array for JSON.
+        String questionsString = null;
         try {
             questionsString = rS.toString();
             Object o = com.mongodb.util.JSON.parse(questionsString);
             BasicDBList obj = (BasicDBList) o;
 
             updatedUser.setQuestions(Util.hashQuestions(obj));
+
+            DatabaseService.updateQuestions(updatedUser);
         } catch (Exception e) {
-            e.printStackTrace();
-            Status status = null;
-            return (status = ok(e.toString() + " " + e.getMessage() + " " + e.getStackTrace().toString() + " " + "\n" + questionsString));
-        }
-        try {
-            UserService.updateQuestions(updatedUser);
-
-        } catch (Exception e) {
-
-
-            PrintStream s = null;
-            e.printStackTrace();
-            //questions.add(s);
+            return internalServerError("Database Connection Error: Could not connect to database.");
         }
 
-        Status status = null;
 
-
+        //Combine FacebookUser model with another query.
         facebookUser.combine(facebookClient.fetchObject(facebookUser.getId() + "/picture", FacebookUser.class,
                 Parameter.with("width", Util.getPictureSize(screen_density)), Parameter.with("redirect", false),
                 Parameter.with("height", Util.getPictureSize(screen_density)), Parameter.with("type", "normal")));
 
+        //Create QuziterUser models.
         QuizterUser tempUser = new QuizterUser();
         tempUser.mapFacebookUser(facebookUser);
-        QuizterUser user = ProfileController.authentication(tempUser);
 
 
+        QuizterUser user = null;
+        try {
+            user = ProfileController.authentication(tempUser);
+        } catch (UnknownHostException e) {
+            return internalServerError("Database Connection Error: Could not connect to database.");
+        }
+
+
+        // Construct JSON for return
         if (user != null) {
             //Return JSON.
             ObjectNode result = Json.newObject();
@@ -178,13 +198,22 @@ public class ProfileController extends Controller {
         return status;
     }
 
+
+    /**
+     * Grabs a list of questions from a specified index in the database
+     *
+     * @return list of default questions retrieved from database
+     */
     @BodyParser.Of(BodyParser.Json.class)
     public static Result loadQuestions() {
 
-        //JSON object from request.
+        //Returned HTTP status code.
+        Status status = null;
+
+        //Parse JSON into JsonNode from incoming HTTP request.
         JsonNode requestJson = request().body().asJson();
 
-        //Check for un/pw
+        //Retrieve expected attributes from JSON.
         String ACCESS_TOKEN = requestJson.findPath("ACCESS_TOKEN").textValue();
         String userQuestions_index = requestJson.findPath("current_end_index").textValue();
 
@@ -192,9 +221,10 @@ public class ProfileController extends Controller {
             return badRequest("Bad JSON: Invalid parameters.");
         }
 
-        //Public facebook client accessor
+        //Create Facebook API accessor with user token.
         FacebookClient facebookClient = new DefaultFacebookClient(ACCESS_TOKEN);
 
+        //Retrieve QuizterUser's facebook profile information.
         FacebookUser facebookUser = null;
         try {
             facebookUser = facebookClient.fetchObject("me", FacebookUser.class);
@@ -202,14 +232,21 @@ public class ProfileController extends Controller {
             return unauthorized("OAuth Exception: Invalid authentication token.");
         }
 
+        //Create QuziterUser Models.
         QuizterUser updatedUser = new QuizterUser();
         updatedUser.mapFacebookUser(facebookUser);
 
-        int index = Integer.parseInt(userQuestions_index);
-        Status status = null;
-
+        //Parse integer from JSON attribute.
+        int index = 0;
         try {
-            Iterable<Question> questions = UserService.loadQuestionsFromIndex(index);
+            index = Integer.parseInt(userQuestions_index);
+        } catch (NumberFormatException e) {
+            return badRequest("Bad JSON: Invalid parameters.");
+        }
+
+        //Construct questions JSON array from database returned iterable.
+        try {
+            Iterable<Question> questions = DatabaseService.loadQuestionsFromIndex(index);
             ArrayList<String> questionList = new ArrayList<String>();
             Iterator<Question> iter = questions.iterator();
             while (iter.hasNext()) {
@@ -237,22 +274,18 @@ public class ProfileController extends Controller {
     }
 
 
-
-    public static QuizterUser authentication(final QuizterUser newUser) {
+    /**
+     * @param newUser User to be registered or retrieved from database
+     * @return QuizterUser model populated with database attributes.
+     */
+    public static QuizterUser authentication(final QuizterUser newUser) throws UnknownHostException {
         QuizterUser user = null;
-        try {
-            user = UserService.userAlreadyExists(newUser);
-            if (user == null) {
-                user = UserService.registerUser(newUser);
-            }
-
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        user = DatabaseService.userAlreadyExists(newUser);
+        if (user == null) {
+            user = DatabaseService.registerUser(newUser);
         }
-
         return user;
     }
-
 
 
 }

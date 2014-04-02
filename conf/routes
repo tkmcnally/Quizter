@@ -12,7 +12,7 @@ POST	/api/android/get-profile	            controllers.ProfileController.getProfi
 POST	/api/android/get-default-questions      controllers.ProfileController.loadQuestions()
 
 # API Route to update user's profile
-POST	/api/android/update-profile	            controllers.ProfileController.updateQuestions()
+POST	/api/android/update-profile	            controllers.ProfileController.updateProfile()
 
 # API Route for retrieving a user's leaderboard
 POST	/api/android/get-leaderboard	        controllers.LeaderboardController.loadLeaderboard()
