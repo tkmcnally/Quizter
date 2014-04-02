@@ -8,6 +8,7 @@ import models.UserAnsweredQuestions;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
 import play.Play;
+import utils.Util;
 
 import java.net.UnknownHostException;
 import java.text.DateFormat;
@@ -159,13 +160,15 @@ public class DatabaseService {
         Iterator iter = users.iterator();
         while (iter.hasNext()) {
             tempUser = (QuizterUser) iter.next();
-            if (current_player == index) {
-                user = tempUser;
-                break;
-            } else if (current_player < index) {
-                current_player++;
-            } else {
-                break;
+            if(Util.hasSetupProfile(tempUser)) {
+                if (current_player == index) {
+                    user = tempUser;
+                    break;
+                } else if (current_player < index) {
+                    current_player++;
+                } else {
+                    break;
+                }
             }
         }
 
