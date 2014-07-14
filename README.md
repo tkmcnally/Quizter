@@ -40,5 +40,5 @@ This project contains *four* major components:
 
 ### Status:
 
->In Development
+>Published (Beta)
 =======
